@@ -1,5 +1,7 @@
 import os
 
+import django.db.models
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,6 +25,26 @@ USE_I18N = True
 
 USE_TZ = False
 
+AUTH_USER_MODEL = "db.User"
+
 INSTALLED_APPS = [
     "db",
+    "django_extensions",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+]
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
