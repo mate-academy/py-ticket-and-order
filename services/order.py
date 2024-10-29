@@ -13,17 +13,17 @@ def create_order(tickets: list[dict],
                  ) -> Order:
     user = User.objects.get(username=username)
     if date is None:
-        order_date = timezone.now().strftime('%Y-%m-%d %H:%M')
+        order_date = timezone.now().strftime("%Y-%m-%d %H:%M")
     else:
         try:
             # Спочатку читаємо як datetime.date
-            date_only = datetime.strptime(date, '%Y-%m-%d').date()
+            date_only = datetime.strptime(date, "%Y-%m-%d").date()
             # Потім перетворюємо на datetime з опівнічним часом
             order_date = datetime.combine(date_only, datetime.time())
         except ValueError:
             try:
                 # Якщо формат включає час
-                order_date = datetime.strptime(date, '%Y-%m-%d %H:%M')
+                order_date = datetime.strptime(date, "%Y-%m-%d %H:%M")
             except ValueError:
                 raise ValueError("Date format should be "
                                  "'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'")
