@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import UniqueConstraint
@@ -59,7 +60,7 @@ class Order(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"Order: {self.created_at}"
+        return f"Order: {str(self.created_at)}"
 
     class Meta:
         ordering = ("-created_at",)
@@ -80,11 +81,25 @@ class Ticket(models.Model):
 
     def clean(self):
         if self.movie_session:
-            if self.movie_session.cinema_hall.rows < self.row or self.row < 1:
-                raise ValidationError(f"Row must be in limit from 1 to {self.movie_session.cinema_hall.rows}")
+            if not 1 <= self.row <= self.movie_session.cinema_hall.rows:
+                raise ValidationError(
+                    {
+                        "row": [f"row number must be in available range: "
+                                f"(1, {self.movie_session.cinema_hall.rows}): (1, {self.row})"]
+                    }
+                )
 
-            if self.movie_session.cinema_hall.seats_in_row < self.seat or self.seat < 1:
-                raise ValidationError(f"Seat must be in limit from 1 to {self.movie_session.cinema_hall.seats_in_row}")
+            if not 1 < self.seat < self.movie_session.cinema_hall.seats_in_row:
+                raise ValidationError(
+                    {
+                        "seat": [f"seat number must be in available range: "
+                                 f"(1, {self.movie_session.cinema_hall.seats_in_row}): (1, {self.seat})"]
+                    }
+                )
 
     def __str__(self) -> str:
-        return f"Ticket: {self.movie_session.movie} {self.movie_session.show_time} (row: {self.row}, seat: {self.seat})"
+        return (f"Ticket: {self.movie_session.movie} {str(self.movie_session.show_time)}"
+                f" (row: {self.row}, seat: {self.seat})")
+
+class User(AbstractUser):
+    pass
