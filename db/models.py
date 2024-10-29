@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 
+import settings
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -56,7 +58,10 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
 
     def __str__(self) -> str:
         return str(self.created_at)
@@ -92,8 +97,8 @@ class Ticket(models.Model):
                     }
                 )
 
-            if not 1 < self.seat < self.movie_session.cinema_hall.seats_in_row:
-                seats = self.movie_session.cinema_hall.seats_in_row
+            seats = self.movie_session.cinema_hall.seats_in_row
+            if not 1 <= self.seat <= seats:
                 raise ValidationError(
                     {
                         "seat": [f"seat number must be in available range: "
