@@ -1,6 +1,5 @@
 from db.models import Order, Ticket, User
 from django.db import transaction
-from django.utils import timezone
 
 
 def create_order(
@@ -14,9 +13,12 @@ def create_order(
         except User.DoesNotExist:
             raise ValueError("User does not exist")
 
-        created_at = date if date else timezone.now()
+        order = Order.objects.create(user=user)
 
-        order = Order.objects.create(user=user, created_at=created_at)
+        if date:
+            order.created_at = date
+
+        order.save()
 
         for ticket in tickets:
             Ticket.objects.create(
@@ -25,6 +27,7 @@ def create_order(
                 movie_session_id=ticket["movie_session"],
                 order=order
             )
+
 
 def get_orders(
         username: str = None

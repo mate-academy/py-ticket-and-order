@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import UniqueConstraint
 
 
 class Genre(models.Model):
@@ -60,7 +59,7 @@ class Order(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"Order: {str(self.created_at)}"
+        return str(self.created_at)
 
     class Meta:
         ordering = ("-created_at",)
@@ -73,19 +72,23 @@ class Ticket(models.Model):
     seat = models.IntegerField()
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["movie_session", "row", "seat"], name="unique_ticket")]
+        constraints = [models.UniqueConstraint(
+            fields=["movie_session", "row", "seat"],
+            name="unique_ticket"
+        )]
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
 
-    def clean(self):
+    def clean(self) -> None:
         if self.movie_session:
             if not 1 <= self.row <= self.movie_session.cinema_hall.rows:
                 raise ValidationError(
                     {
                         "row": [f"row number must be in available range: "
-                                f"(1, {self.movie_session.cinema_hall.rows}): (1, {self.row})"]
+                                f"(1, rows): "
+                                f"(1, {self.movie_session.cinema_hall.rows})"]
                     }
                 )
 
@@ -93,13 +96,17 @@ class Ticket(models.Model):
                 raise ValidationError(
                     {
                         "seat": [f"seat number must be in available range: "
-                                 f"(1, {self.movie_session.cinema_hall.seats_in_row}): (1, {self.seat})"]
+                                 f"(1, seats_in_row): "
+                                 f"(1, {self.movie_session
+                                            .cinema_hall.seats_in_row})"]
                     }
                 )
 
     def __str__(self) -> str:
-        return (f"Ticket: {self.movie_session.movie} {str(self.movie_session.show_time)}"
-                f" (row: {self.row}, seat: {self.seat})")
+        return (f"{self.movie_session.movie.title} "
+                f"{self.movie_session.show_time} "
+                f"(row: {self.row}, seat: {self.seat})")
+
 
 class User(AbstractUser):
     pass
