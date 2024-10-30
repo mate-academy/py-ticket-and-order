@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from db.models import User
 
 
 def create_user(
@@ -8,6 +9,7 @@ def create_user(
     last_name: str = None,
     email: str = None,
 ) -> None:
+
     get_user_model().objects.create_user(
         username=username,
         password=password,
@@ -18,7 +20,11 @@ def create_user(
 
 
 def get_user(user_id: int) -> None:
-    return get_user_model().objects.get(pk=user_id)
+    try:
+        user = get_user_model().objects.get(pk=user_id)
+    except User.DoesNotExist:
+        print("User not found.")
+    return user
 
 
 def update_user(
