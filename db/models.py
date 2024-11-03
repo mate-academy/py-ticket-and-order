@@ -63,7 +63,7 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(AUTH_USER_MODEL,
+    user = models.ForeignKey(to=AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              related_name="orders")
 
@@ -75,17 +75,17 @@ class Order(models.Model):
 
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey(MovieSession,
+    movie_session = models.ForeignKey(to=MovieSession,
                                       on_delete=models.CASCADE,
                                       related_name="tickets")
-    order = models.ForeignKey(Order,
+    order = models.ForeignKey(to=Order,
                               on_delete=models.CASCADE,
                               related_name="tickets")
     row = models.IntegerField()
     seat = models.IntegerField()
 
     def clean(self) -> None:
-        if not (1 < self.row <= self.movie_session.cinema_hall.rows):
+        if not (1 <= self.row <= self.movie_session.cinema_hall.rows):
             raise ValidationError(
                 {
                     "row": [
@@ -94,7 +94,7 @@ class Ticket(models.Model):
                     ]
                 }
             )
-        if not (1 < self.seat <= self.movie_session.cinema_hall.seats_in_row):
+        if not (1 <= self.seat <= self.movie_session.cinema_hall.seats_in_row):
             raise ValidationError(
                 {
                     "seat": [
