@@ -20,13 +20,20 @@ def create_order(
             order.created_at = date
             order.save()
 
-        for ticket in tickets:
-            Ticket.objects.create(
-                movie_session_id=ticket.get("movie_session"),
-                order=order,
+        tickets = [
+            Ticket(
                 row=ticket.get("row"),
-                seat=ticket.get("seat")
+                seat=ticket.get("seat"),
+                movie_session_id=ticket.get("movie_session"),
+                order=order
             )
+            for ticket in tickets
+        ]
+
+        for ticket in tickets:
+            ticket.full_clean()
+
+        Ticket.objects.bulk_create(tickets)
 
         return order
 
