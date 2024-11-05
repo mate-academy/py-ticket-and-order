@@ -83,7 +83,7 @@ class Ticket(models.Model):
     def clean(self) -> None:
         errors = {}
 
-        if isinstance((self.row, self.seat), int):
+        if not (isinstance(self.row, int) and isinstance(self.seat, int)):
             raise ValidationError("Row and seat numbers must be integers.")
 
         if self.row > self.movie_session.cinema_hall.rows:
