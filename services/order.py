@@ -1,27 +1,38 @@
-from db.models import Order, Ticket
-from django.db.models import QuerySet
+from datetime import datetime
+
 from django.db import transaction
+from django.db.models import QuerySet
+
+from db.models import Order, Ticket, User, MovieSession
 
 
-def create_order(tickets: list[dict], username, date: str = None) -> Order:
+def create_order(
+        tickets: list[dict],
+        username: str,
+        date: datetime = None
+) -> Order:
     with transaction.atomic():
         order = Order()
-        order.user = username
+        user = User.objects.get(username=username)
+        order.user = user
         if date:
+            order.save()
             order.created_at = date
         order.save()
-        order_tickets = []
+        session_id = tickets[0].get("movie_session")
+        movie_session = MovieSession.objects.get(id=session_id)
         for ticket in tickets:
-            order_ticket = Ticket(*ticket)
-            order_ticket.save
-            order_tickets.append(order_ticket)
-        order.tickets.set(order_tickets)
+            order_ticket = Ticket()
+            order_ticket.movie_session = movie_session
+            order_ticket.row = ticket.get("row")
+            order_ticket.seat = ticket.get("seat")
+            order_ticket.order = order
+            order_ticket.save()
     return order
 
 
 def get_orders(username: str = None) -> QuerySet:
     queryset = Order.objects.all()
     if username:
-        queryset = queryset.filter(user_username=username)
+        queryset = queryset.filter(user__username=username)
     return queryset
-    

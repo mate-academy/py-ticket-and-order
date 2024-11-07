@@ -8,23 +8,27 @@ def create_user(
     first_name: str = None,
     last_name: str = None
 ) -> User:
-    user = super().create_user(
-        username=username,
-        password=password,
-        email=email,
-        first_name=first_name,
-        last_name=last_name
-    )
+    user = User()
+    user.username = username
+    user.set_password(password)
+
+    if email:
+        user.email = email
+
+    if first_name:
+        user.first_name = first_name
+
+    if last_name:
+        user.last_name = last_name
+
+    user.save()
     return user
-    
-    
+
+
 def get_user(user_id: int) -> User:
-    try:
-        User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return None
-    
-    
+    return User.objects.get(id=user_id)
+
+
 def update_user(
     user_id: int,
     username: str = None,
@@ -32,15 +36,22 @@ def update_user(
     email: str = None,
     first_name: str = None,
     last_name: str = None
-):
-    try:
-        user = User.objects.get(id=user_id)
+) -> None:
+    user = User.objects.get(id=user_id)
+
+    if username:
         user.username = username
+
+    if password:
         user.set_password(password)
+
+    if email:
         user.email = email
+
+    if first_name:
         user.first_name = first_name
+
+    if last_name:
         user.last_name = last_name
-        user.save()
-    except User.DoesNotExist:
-        pass
-    
+
+    user.save()
