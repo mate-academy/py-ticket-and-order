@@ -55,4 +55,5 @@ def get_taken_seats(movie_session_id: int) -> list[dict]:
         {
             "row": el.get("tickets__row"),
             "seat": el.get("tickets__seat")
-        } for el in session_tickets]
+        } for el in session_tickets
+    ]
