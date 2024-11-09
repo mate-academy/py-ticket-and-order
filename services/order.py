@@ -49,11 +49,11 @@ def create_order(
 def get_orders(username: str = None) -> QuerySet[Order]:
     if username is None:
         return Order.objects.all().values()
-    else:
-        user = get_user_model().objects.get(username=username)
 
-        if not user:
-            raise ValidationError(
-                f"User with username '{username}' does not exist.")
+    user = get_user_model().objects.get(username=username)
 
-        return Order.objects.filter(user=user).values()
+    if not user:
+        raise ValidationError(
+            f"User with username '{username}' does not exist.")
+
+    return Order.objects.filter(user=user).values()
