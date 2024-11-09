@@ -40,6 +40,8 @@ def update_user(
     user = User.objects.get(id=user_id)
 
     if username:
+        if User.objects.filter(username=username).exists():
+            return
         user.username = username
 
     if password:

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -58,7 +59,7 @@ class MovieSession(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        to="User",
+        to=settings.AUTH_USER_MODEL,
         related_name="orders",
         on_delete=models.CASCADE
     )
@@ -104,8 +105,8 @@ class Ticket(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=["row", "seat"],
-                name="unique_row_and_seat"
+                fields=["row", "seat", "movie_session"],
+                name="unique_row_and_seat_for_movie_session"
             )
         ]
 
