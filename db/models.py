@@ -113,7 +113,7 @@ class Ticket(models.Model):
                 }
             )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         return super().save(*args, **kwargs)
 
