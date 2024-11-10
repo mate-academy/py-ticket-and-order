@@ -101,10 +101,10 @@ class Ticket(models.Model):
         if self.row > self.movie_session.cinema_hall.rows:
             raise ValidationError(
                 {"row": f"row "
-                         f"number must "
-                         f"be in available range: "
-                         f"(1, rows): "
-                         f"(1, {self.movie_session.cinema_hall.rows})"})
+                        f"number must "
+                        f"be in available range: "
+                        f"(1, rows): "
+                        f"(1, {self.movie_session.cinema_hall.rows})"})
 
     def save(self, *args, **kwargs) -> callable:
         self.full_clean()
