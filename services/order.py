@@ -8,7 +8,7 @@ from db.models import Order, Ticket, MovieSession
 
 
 @transaction.atomic
-def create_order(tickets: list[dict], username: str, date: str = None):
+def create_order(tickets: list[dict], username: str, date: str = None) -> None:
     if not get_user_model().objects.filter(username=username).exists():
         user = get_user_model().objects.create_user(username=username)
     else:
@@ -24,7 +24,9 @@ def create_order(tickets: list[dict], username: str, date: str = None):
     for ticket in tickets:
         row = ticket.get("row")
         seat = ticket.get("seat")
-        movie_session = MovieSession.objects.get(pk=ticket.get("movie_session"))
+        movie_session = MovieSession.objects.get(
+            pk=ticket.get("movie_session")
+        )
 
         Ticket.objects.create(
             movie_session=movie_session,
