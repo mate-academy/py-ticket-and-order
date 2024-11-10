@@ -85,11 +85,11 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (f"{self.movie_session.movie} {self.movie_session.show_time} "
                 f"(row: {self.row}, seat: {self.seat})")
 
-    def clean(self):
+    def clean(self) -> None:
         if self.seat > self.movie_session.cinema_hall.seats_in_row:
             raise ValidationError(
                 {"seat": f"seat "
@@ -99,19 +99,18 @@ class Ticket(models.Model):
                          f"(1, "
                          f"{self.movie_session.cinema_hall.seats_in_row})"})
         if self.row > self.movie_session.cinema_hall.rows:
-            raise ValidationError(
-                {"row": f"row "
+            raise ValidationError({"row": f"row "
                          f"number must "
                          f"be in available range: "
                          f"(1, rows): "
                          f"(1, {self.movie_session.cinema_hall.rows})"}
 )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> callable:
         self.full_clean()
         return super().save(*args, **kwargs)
 
     class Meta:
         constraints = (UniqueConstraint(
-                    fields=["row", "seat", "movie_session"],
-                    name="unique_row_seat_movie_session"),)
+                        fields=["row", "seat", "movie_session"],
+                        name="unique_row_seat_movie_session"),)

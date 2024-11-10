@@ -5,7 +5,6 @@ from django.utils.datetime_safe import datetime
 from db.models import Ticket, Order, User, MovieSession
 
 
-
 def create_order(tickets: list[Ticket], username: str,
                  date: datetime = None) -> None:
     with transaction.atomic():
