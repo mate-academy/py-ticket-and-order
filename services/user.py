@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
 
 from db.models import User
 
@@ -36,7 +35,7 @@ def update_user(
         email: str = None,
         first_name: str = None,
         last_name: str = None
-):
+) -> None:
     user = get_user_model().objects.get(pk=user_id)
 
     if username:
@@ -55,7 +54,3 @@ def update_user(
         user.last_name = last_name
 
     user.save()
-
-
-
-

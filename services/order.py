@@ -1,10 +1,8 @@
-from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
-
-import init_django_orm  # noqa: F401
-
 from datetime import datetime
 from django.db import transaction
+
+from django.contrib.auth import get_user_model
+from django.db.models import QuerySet
 
 from db.models import Order, Ticket, MovieSession
 
@@ -41,43 +39,3 @@ def get_orders(username: str = None) -> QuerySet:
         return Order.objects.filter(user__username=username)
 
     return Order.objects.all()
-
-
-if __name__ == "__main__":
-    # tickets = [
-    #     {
-    #         "row": 6,
-    #         "seat": 12,
-    #         "movie_session": 1
-    #     },
-    #     {
-    #         "row": 6,
-    #         "seat": 13,
-    #         "movie_session": 1
-    #     }
-    # ]
-    # create_order(tickets=tickets, username="Username_1", date="2022-4-20 11:27")
-
-    # tickets = [
-    #     {
-    #         "row": 5,
-    #         "seat": 7,
-    #         "movie_session": 1
-    #     },
-    #     {
-    #         "row": 6,
-    #         "seat": 9,
-    #         "movie_session": 1
-    #     }
-    # ]
-    # create_order(tickets=tickets, username="Username_1", date="2022-4-20 11:27")
-    # create_order(tickets=tickets, username="Username_1", date="2022-9-20 11:27")
-    # create_order(tickets=tickets, username="Username_2")
-
-    # print(get_orders(username="Username_1"))
-    # print(get_orders(username="admin.user"))
-    # print(get_orders())
-    # create_order(tickets=tickets, username="user_1", date="2020-11-10 14:40")
-    # print(list(Order.objects.all().values_list("user__username")) == [("user_1",)])
-    # print(Order.objects.all().values_list("user__username"))
-    pass
