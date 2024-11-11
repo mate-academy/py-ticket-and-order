@@ -100,7 +100,7 @@ class Ticket(models.Model):
         if not 1 <= self.seat <= self.movie_session.cinema_hall.seats_in_row:
             raise ValidationError(
                 {"seat": "seat number must be in "
-                    "available range: (1, seats_in_row): (1,"
+                    "available range: (1, seats_in_row): (1, "
                  f"{self.movie_session.cinema_hall.seats_in_row})"}
             )
         if not 1 <= self.row <= self.movie_session.cinema_hall.rows:
