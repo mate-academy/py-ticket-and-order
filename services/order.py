@@ -35,5 +35,4 @@ def get_orders(username: str = None) -> Order:
     if username:
         user = User.objects.get(username=username)
         return Order.objects.filter(user=user)
-    else:
-        return Order.objects.all()
+    return Order.objects.all()

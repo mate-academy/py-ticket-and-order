@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from db.models import User
 
 
@@ -23,7 +25,7 @@ def create_user(username: str,
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    return get_object_or_404(User, id=user_id)
 
 
 def update_user(user_id: int,
