@@ -5,7 +5,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 
-from db.models import Order, Ticket
+from db.models import Order, Ticket, MovieSession
 
 
 @transaction.atomic
@@ -25,10 +25,12 @@ def create_order(
         order.save()
 
     for ticket in tickets:
+        movie_session = get_object_or_404(MovieSession, id=ticket.get("movie_session"))
+
         Ticket.objects.create(
             row=ticket.get("row"),
             seat=ticket.get("seat"),
-            movie_session_id=ticket.get("movie_session"),
+            movie_session_id=movie_session.id,
             order=order
         )
 
