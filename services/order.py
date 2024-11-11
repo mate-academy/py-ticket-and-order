@@ -5,25 +5,25 @@ from django.utils.datetime_safe import datetime
 from db.models import Ticket, Order, User, MovieSession
 
 
+@transaction.atomic
 def create_order(tickets: list[Ticket], username: str,
                  date: datetime = None) -> None:
-    with transaction.atomic():
-        user = User.objects.get(username=username)
-        order = Order.objects.create(
-            user=user
+    user = User.objects.get(username=username)
+    order = Order.objects.create(
+        user=user
+    )
+    if date:
+        order.created_at = date
+        order.save()
+    for ticket in tickets:
+        movie_session = MovieSession.objects.get(
+            id=ticket["movie_session"])
+        Ticket.objects.create(
+            row=ticket["row"],
+            order=order,
+            seat=ticket["seat"],
+            movie_session=movie_session
         )
-        if date:
-            order.created_at = date
-            order.save()
-        for ticket in tickets:
-            movie_session = MovieSession.objects.get(
-                id=ticket["movie_session"])
-            Ticket.objects.create(
-                row=ticket["row"],
-                order=order,
-                seat=ticket["seat"],
-                movie_session=movie_session
-            )
 
 
 def get_orders(username: str = None) -> QuerySet:
