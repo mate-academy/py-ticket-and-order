@@ -7,7 +7,11 @@ from db.models import Ticket, Order, User
 
 
 @transaction.atomic
-def create_order(tickets: list[dict], username: str, date: str = None) -> Order:
+def create_order(
+        tickets: list[dict],
+        username: str,
+        date: str = None
+) -> Order:
     try:
         user = get_user_model().objects.get(username=username)
     except User.DoesNotExist:
