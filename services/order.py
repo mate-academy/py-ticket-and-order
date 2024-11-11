@@ -25,7 +25,10 @@ def create_order(
         order.save()
 
     for ticket in tickets:
-        movie_session = get_object_or_404(MovieSession, id=ticket.get("movie_session"))
+        movie_session = get_object_or_404(
+            MovieSession,
+            id=ticket.get("movie_session")
+        )
 
         Ticket.objects.create(
             row=ticket.get("row"),
