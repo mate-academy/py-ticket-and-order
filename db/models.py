@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import DateTimeField, ForeignKey, IntegerField, \
     UniqueConstraint
 
+import settings
+
 
 class User(AbstractUser):
     ...
@@ -62,7 +64,7 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = DateTimeField(auto_now_add=True)
-    user = ForeignKey(User, on_delete=models.CASCADE)
+    user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.created_at}"
