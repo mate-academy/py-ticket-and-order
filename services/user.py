@@ -37,11 +37,7 @@ def update_user(
         last_name: str = None
 ) -> None:
     try:
-        user = None
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            print(f"User with user_id {user_id} does not exist")
+        user  = User.objects.get(id=user_id)
         if username:
             user.username = username
         if password:
