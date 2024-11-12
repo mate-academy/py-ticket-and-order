@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from django.contrib.auth import get_user_model
+from settings import AUTH_USER_MODEL
 
 
 class Genre(models.Model):
@@ -58,7 +58,8 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    User = get_user_model()
+    user = models.ForeignKey(AUTH_USER_MODEL,
+                             on_delete=models.CASCADE, related_name="orders")
 
     class Meta:
         ordering = ["-created_at"]
