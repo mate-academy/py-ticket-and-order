@@ -1,3 +1,5 @@
+from typing import Optional
+
 from db.models import User
 
 
@@ -28,12 +30,17 @@ def create_user(
     return user
 
 
-def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+def get_user(user_id: int) -> Optional[User]:
+    try:
+        return User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return None
 
 
 def update_user(user_id: int, password: str = None, **kwargs) -> User:
     user = get_user(user_id)
+    if not user:
+        return None
     for key, value in kwargs.items():
         setattr(user, key, value)
     if password:
