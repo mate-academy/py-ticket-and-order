@@ -14,10 +14,8 @@ def create_order(
 
     order = Order.objects.create(
         user=user,
+        created_at=date if date else datetime.now()
     )
-    if date:
-        order.created_at = date
-        order.save()
 
     for ticket in tickets:
         try:

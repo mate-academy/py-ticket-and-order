@@ -20,7 +20,6 @@ def create_user(
         user.email = email
 
     if first_name:
-
         user.first_name = first_name
 
     if last_name:
@@ -30,7 +29,6 @@ def create_user(
     return user
 
 
-# fix
 def get_user(user_id: int) -> Optional[User]:
     try:
         return User.objects.get(id=user_id)

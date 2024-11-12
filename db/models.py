@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from settings import AUTH_USER_MODEL
+from django.contrib.auth import get_user_model
 
 
 class Genre(models.Model):
@@ -58,9 +58,7 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(
-        AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orders"
-    )
+    User = get_user_model()
 
     class Meta:
         ordering = ["-created_at"]
@@ -98,6 +96,11 @@ class Ticket(models.Model):
                         f" (1, {cinema_hall.rows})"
                     ]
                 }
+            )
+
+        if self.row < 1 or self.seat < 1:
+            raise ValidationError(
+                {"row": ["row and seat number must be greater than 0"]}
             )
 
         if self.seat > cinema_hall.seats_in_row:
