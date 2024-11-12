@@ -23,7 +23,7 @@ def create_user(
     return user
 
 
-def get_user(user_id: int) -> QuerySet[User]:
+def get_user(user_id: int) -> User:
     return User.objects.get(id=user_id)
 
 
@@ -34,7 +34,7 @@ def update_user(
     email: str | None = None,
     first_name: str | None = None,
     last_name: str | None = None,
-) -> QuerySet[User]:
+) -> User:
     user = User.objects.get(id=user_id)
     if username:
         user.username = username
