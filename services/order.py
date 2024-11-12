@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from db.models import Order, Ticket
 from django.db.models import QuerySet
 
+
 @transaction.atomic
 def create_order(
         tickets: list[dict],
