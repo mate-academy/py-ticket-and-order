@@ -30,6 +30,7 @@ def create_user(
     return user
 
 
+# fix
 def get_user(user_id: int) -> Optional[User]:
     try:
         return User.objects.get(id=user_id)
@@ -37,7 +38,7 @@ def get_user(user_id: int) -> Optional[User]:
         return None
 
 
-def update_user(user_id: int, password: str = None, **kwargs) -> User:
+def update_user(user_id: int, password: str = None, **kwargs) -> None | User:
     user = get_user(user_id)
     if not user:
         return None
