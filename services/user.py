@@ -22,7 +22,10 @@ def create_user(username: str,
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(pk=user_id)
+    try:
+        return User.objects.get(pk=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with ID {user_id} does not exist.")
 
 
 def update_user(user_id: int,
@@ -47,4 +50,4 @@ def update_user(user_id: int,
         user.save()
         return user
     except ObjectDoesNotExist:
-        raise ObjectDoesNotExist(f"User with id {user_id} does not exist.")
+        raise ValueError(f"User with ID {user_id} not found. Update failed.")

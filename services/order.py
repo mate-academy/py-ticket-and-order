@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import transaction
 from django.utils.datetime_safe import datetime
 
@@ -7,10 +7,16 @@ from db.models import Order, User, Ticket
 
 def create_order(tickets: list, username: str, date: datetime = None) -> Order:
     if not tickets:
-        raise Exception("No tickets to create")
+        raise ValueError("No tickets to create")
 
     with transaction.atomic():
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            raise ValueError(
+                f"User with username '{username}' does not exist."
+            )
+
         order = Order.objects.create(user=user)
         if date:
             order.created_at = date
@@ -39,7 +45,12 @@ def create_order(tickets: list, username: str, date: datetime = None) -> Order:
 
 def get_orders(username: str = None) -> list:
     if username:
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            raise ValueError(
+                f"User with username '{username}' does not exist."
+            )
         return Order.objects.filter(user=user)
     else:
         return Order.objects.all()
