@@ -13,11 +13,11 @@ def create_order(
         raise ValueError(f"User with username '{username}' does not exist.")
 
     order = Order.objects.create(
-        user=user,
+        user=user
     )
     if date:
         order.created_at = date
-    order.save()
+        order.save()
 
     for ticket in tickets:
         try:
