@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from django.db.models import QuerySet
 
@@ -11,9 +12,13 @@ def create_order(
         tickets: list[dict],
         username: str,
         date: datetime = None
-) -> Order:
+) -> Order | None:
+
     with (transaction.atomic()):
-        user = get_user_model().objects.get(username=username)
+        try:
+            user = get_user_model().objects.get(username=username)
+        except ObjectDoesNotExist as e:
+            raise ValidationError(str(e))
 
         order = Order.objects.create(user=user)
 
@@ -23,9 +28,13 @@ def create_order(
             order.save(update_fields=["created_at"])
 
         for ticket in tickets:
-            movie_sessions = (
-                MovieSession.objects.get(id=ticket["movie_session"])
-            )
+            try:
+                movie_sessions = (
+                    MovieSession.objects.get(id=ticket["movie_session"])
+                )
+            except ObjectDoesNotExist as e:
+                raise ValidationError(e)
+
             Ticket.objects.create(
                 order=order,
                 movie_session=movie_sessions,

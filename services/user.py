@@ -28,7 +28,10 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return get_user_model().objects.get(pk=user_id)
+    try:
+        return get_user_model().objects.get(pk=user_id)
+    except get_user_model().DoesNotExist as e:
+        raise e
 
 
 def update_user(
@@ -38,7 +41,10 @@ def update_user(
         email: str = None,
         first_name: str = None,
         last_name: str = None) -> User:
-    user = get_user_model().objects.get(pk=user_id)
+    try:
+        user = get_user_model().objects.get(pk=user_id)
+    except get_user_model().DoesNotExist as e:
+        raise e
 
     if username:
         user.username = username
