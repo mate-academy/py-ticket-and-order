@@ -22,7 +22,7 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return get_object_or_404(User, id=user_id)
+    return get_object_or_404(get_user_model(), id=user_id)
 
 
 def update_user(
@@ -32,8 +32,8 @@ def update_user(
         email: str = None,
         first_name: str = None,
         last_name: str = None
-) -> None:
-    user = get_object_or_404(User, id=user_id)
+) -> User:
+    user = get_user(user_id=user_id)
 
     if username:
         user.username = username
@@ -47,3 +47,5 @@ def update_user(
         user.last_name = last_name
 
     user.save()
+
+    return user
