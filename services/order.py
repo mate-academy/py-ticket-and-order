@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Dict
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -8,7 +9,7 @@ from db.models import Order, User, Ticket
 
 @transaction.atomic
 def create_order(
-        tickets: list[dict],
+        tickets: list[Dict],
         username: str,
         date: datetime = None
 ) -> None:
