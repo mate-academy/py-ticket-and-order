@@ -24,11 +24,9 @@ class Movie(models.Model):
     title: str = models.CharField(max_length=255)
     description: str = models.TextField()
     actors: models.Manager = models.ManyToManyField(
-        to=Actor, related_name="movies"
-    )
+        to=Actor, related_name="movies")
     genres: models.Manager = models.ManyToManyField(
-        to=Genre, related_name="movies"
-    )
+        to=Genre, related_name="movies")
 
     def __str__(self) -> str:
         return self.title
@@ -93,8 +91,10 @@ class Ticket(models.Model):
     seat: int = models.IntegerField()
 
     def __str__(self) -> str:
-        new_str = f"{self.movie_session.movie.title} "
-        f"{self.movie_session.show_time} (row: {self.row}, seat: {self.seat})"
+        new_str = (
+            f"{self.movie_session.movie.title} {self.movie_session.show_time} "
+            f"(row: {self.row}, seat: {self.seat})"
+        )
         return new_str
 
     def clean(self) -> None:
