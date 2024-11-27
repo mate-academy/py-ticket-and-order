@@ -61,7 +61,7 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(null=True, auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -87,14 +87,14 @@ class Ticket(models.Model):
     seat = models.IntegerField()
 
     def clean(self) -> None:
-        if self.row > self.movie_session.cinema_hall.rows:
+        if 0 >= self.row > self.movie_session.cinema_hall.rows:
             raise ValidationError(
                 {"row" : [
                     f"row number must be in available range: "
                     f"(1, rows): (1, {self.movie_session.cinema_hall.rows})"
                 ]}
             )
-        if self.seat > self.movie_session.cinema_hall.seats_in_row:
+        if 0 >= self.seat > self.movie_session.cinema_hall.seats_in_row:
             raise ValidationError(
                 {"seat": [
                     f"seat number must be in available range: "
