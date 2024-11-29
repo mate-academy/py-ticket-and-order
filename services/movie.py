@@ -5,10 +5,14 @@ from db.models import Movie
 
 
 def get_movies(
+    title: str = None,
     genres_ids: list[int] = None,
     actors_ids: list[int] = None,
 ) -> QuerySet:
     queryset = Movie.objects.all()
+
+    if title:
+        queryset = queryset.filter(title__icontains=title)
 
     if genres_ids:
         queryset = queryset.filter(genres__id__in=genres_ids)
@@ -29,7 +33,7 @@ def create_movie(
     genres_ids: list = None,
     actors_ids: list = None,
 ) -> Movie:
-    with transation.atomic():
+    with transaction.atomic():
 
         movie = Movie.objects.create(
             title=movie_title,

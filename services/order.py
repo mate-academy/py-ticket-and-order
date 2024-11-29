@@ -1,23 +1,30 @@
 from django.db import transaction
-from db.models import Order, Ticket, MovieSession, User
+from datetime import datetime
+from db.models import Order, Ticket, User
+from db.models import MovieSession
 
-def create_order(tickets, username, date=None):
-    user = User.objects.filter(username=username).first()
-    if not user:
-        return None
+
+def create_order(tickets: list, username: str, date: str = None) -> User:
+    user = User.objects.get(username=username)
+
+    order_date = datetime.fromisoformat(date) if date else datetime.now()
 
     with transaction.atomic():
-        order = Order.objects.create(user=user, created_at=date) if date else Order.objects.create(user=user)
-        for ticket in tickets:
-            Ticket.objects.create(
-                movie_session=MovieSession.objects.get(id=ticket["movie_session"]),
-                order=order,
-                row=ticket["row"],
-                seat=ticket["seat"]
-            )
-        return order
+        order = Order.objects.create(user=user, created_at=order_date)
 
-def get_orders(username=None):
+        for ticket_data in tickets:
+            movie_session_id = ticket_data.pop("movie_session")
+            movie_session = MovieSession.objects.get(id=movie_session_id)
+            Ticket.objects.create(
+                order=order,
+                movie_session=movie_session,
+                **ticket_data
+            )
+
+    return order
+
+
+def get_orders(username: str = None) -> User:
     if username:
         return Order.objects.filter(user__username=username)
     return Order.objects.all()
