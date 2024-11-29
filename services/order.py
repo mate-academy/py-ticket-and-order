@@ -6,7 +6,12 @@ from db.models import Order, Ticket, User, MovieSession
 
 def create_order(tickets: list[dict], username: str, date: str = None) -> None:
     with transaction.atomic():
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise Exception(
+                f"User with the username {username} does not exist"
+            )
         order_tickets = Order(user=user)
         order_tickets.save()
         if date:
@@ -14,15 +19,25 @@ def create_order(tickets: list[dict], username: str, date: str = None) -> None:
             order_tickets.created_at = created_at_date
             order_tickets.save()
 
-        ticket = [
-            Ticket(row=ticket["row"],
-                   seat=ticket["seat"],
-                   movie_session_id=ticket["movie_session"],
-                   order=order_tickets)
-            for ticket in tickets
-            if MovieSession.objects.get(id=ticket["movie_session"])]
+        ticket_list = []
+        for ticket in tickets:
+            try:
+                movie_session = MovieSession.objects.get(
+                    id=ticket["movie_session"]
+                )
+                ticket_list.append(Ticket(row=ticket["row"],
+                                          seat=ticket["seat"],
+                                          movie_session=movie_session,
+                                          order=order_tickets))
 
-        Ticket.objects.bulk_create(ticket)
+            except MovieSession.DoesNotExist:
+                raise Exception(
+                    f"MovieSession with the "
+                    f"id {ticket['movie_session']} does not exist")
+        try:
+            Ticket.objects.bulk_create(ticket_list)
+        except Ticket.DoesNotExist as e:
+            raise Exception(f"Error creating tickets: {str(e)}")
 
 
 def get_orders(username: str = None) -> QuerySet:

@@ -12,7 +12,6 @@ def get_movies(
     queryset = Movie.objects.all()
 
     if title:
-        # queryset = queryset.filter(title=title)
         queryset = Movie.objects.filter(Q(title__contains=title))
 
     if genres_ids:

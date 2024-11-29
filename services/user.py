@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.base_user import AbstractBaseUser
 from db.models import User
 
 
@@ -21,7 +22,7 @@ def create_user(
     user.save()
 
 
-def get_user(user_id: int) -> User:
+def get_user(user_id: int) -> AbstractBaseUser:
     return get_user_model().objects.get(pk=user_id)
 
 
@@ -33,8 +34,10 @@ def update_user(
         first_name: str = None,
         last_name: str = None
 ) -> None:
-    user = get_user_model().objects.get(id=user_id)
-
+    try:
+        user = get_user_model().objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise Exception(f"User with id {user_id} does not exist.")
     if username:
         user.username = username
     if email:
