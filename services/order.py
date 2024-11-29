@@ -4,8 +4,10 @@ from typing import Optional
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 
 from db.models import Order, MovieSession, Ticket
+
 
 User = get_user_model()
 
@@ -15,7 +17,7 @@ def create_order(
     username: str,
     date: Optional[datetime] = None
 ) -> None:
-    user = User.objects.get(username=username)
+    user = get_object_or_404(User, username=username)
 
     with transaction.atomic():
         order = Order.objects.create(user=user, created_at=date)
@@ -24,7 +26,8 @@ def create_order(
             Order.objects.filter(id=order.id).update(created_at=date)
 
         for ticket in tickets:
-            movie_session = MovieSession.objects.get(
+            movie_session = get_object_or_404(
+                MovieSession,
                 id=ticket["movie_session"]
             )
 

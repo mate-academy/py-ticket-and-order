@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction
+from django.shortcuts import get_object_or_404
+
 
 User = get_user_model()
 
@@ -27,17 +29,17 @@ def create_user(
             **extra_fields
         )
     except IntegrityError:
+        if email and User.objects.filter(email=email).exists():
+            raise ValueError(
+                f"A user with the email '{email}' already exists."
+            )
         raise ValueError(
             f"A user with the username '{username}' already exists."
         )
 
 
 def get_user(user_id: int) -> User:
-    try:
-        return User.objects.get(pk=user_id)
-
-    except User.DoesNotExist:
-        raise ValueError(f"user_id '{user_id:}' does not exist.")
+    return get_object_or_404(User, pk=user_id)
 
 
 def update_user(
