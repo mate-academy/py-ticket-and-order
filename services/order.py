@@ -6,12 +6,7 @@ from db.models import Order, Ticket, User, MovieSession
 
 def create_order(tickets: list[dict], username: str, date: str = None) -> None:
     with transaction.atomic():
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise Exception(
-                f"User with the username {username} does not exist"
-            )
+        user = User.objects.get(username=username)
         order_tickets = Order(user=user)
         order_tickets.save()
         if date:
