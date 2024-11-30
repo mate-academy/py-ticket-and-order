@@ -20,10 +20,11 @@ def create_order(
     user = get_object_or_404(User, username=username)
 
     with transaction.atomic():
-        order = Order.objects.create(user=user, created_at=date)
+        order = Order.objects.create(user=user)
 
         if date:
-            Order.objects.filter(id=order.id).update(created_at=date)
+            order.created_at = date
+            order.save()
 
         for ticket in tickets:
             movie_session = get_object_or_404(

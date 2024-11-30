@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import UniqueConstraint
 
-import settings
+from django.conf import settings
 
 
 class Genre(models.Model):
@@ -26,8 +26,8 @@ class Actor(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=255, db_index=True)
     description = models.TextField()
-    actors = models.ManyToManyField(to=Actor, related_name="movies")
-    genres = models.ManyToManyField(to=Genre, related_name="movies")
+    actors = models.ManyToManyField(to=Actor, related_name="movies_by_actor")
+    genres = models.ManyToManyField(to=Genre, related_name="movies_by_genre")
 
     def __str__(self) -> str:
         return self.title
@@ -49,10 +49,14 @@ class CinemaHall(models.Model):
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
     cinema_hall = models.ForeignKey(
-        to=CinemaHall, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=CinemaHall,
+        on_delete=models.CASCADE,
+        related_name="sessions_by_cinema"
     )
     movie = models.ForeignKey(
-        to=Movie, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=Movie,
+        on_delete=models.CASCADE,
+        related_name="sessions_by_movie"
     )
 
     def __str__(self) -> str:
@@ -64,7 +68,7 @@ class Order(models.Model):
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="user_orders"
+        related_name="orders_by_user"
     )
 
     class Meta:
@@ -80,12 +84,12 @@ class Ticket(models.Model):
     movie_session = models.ForeignKey(
         to=MovieSession,
         on_delete=models.CASCADE,
-        related_name="movie_session_tickets"
+        related_name="session_tickets"
     )
     order = models.ForeignKey(
         to=Order,
         on_delete=models.CASCADE,
-        related_name="order_tickets"
+        related_name="tickets_in_order"
     )
     row = models.IntegerField()
     seat = models.IntegerField()
