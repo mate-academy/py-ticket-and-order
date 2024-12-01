@@ -7,12 +7,12 @@ from db.models import Order, Ticket, User, MovieSession
 def create_order(tickets: list[dict], username: str, date: str = None) -> None:
     with transaction.atomic():
         user = User.objects.get(username=username)
-        order_tickets = Order(user=user)
-        order_tickets.save()
+        order_ticket = Order(user=user)
+        order_ticket.save()
         if date:
             created_at_date = datetime.strptime(date, "%Y-%m-%d %H:%M")
-            order_tickets.created_at = created_at_date
-            order_tickets.save()
+            order_ticket.created_at = created_at_date
+            order_ticket.save()
 
         ticket_list = []
         for ticket in tickets:
@@ -23,7 +23,7 @@ def create_order(tickets: list[dict], username: str, date: str = None) -> None:
                 ticket_list.append(Ticket(row=ticket["row"],
                                           seat=ticket["seat"],
                                           movie_session=movie_session,
-                                          order=order_tickets))
+                                          order=order_ticket))
 
             except MovieSession.DoesNotExist:
                 raise Exception(
