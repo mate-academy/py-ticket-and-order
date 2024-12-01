@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser
-from db.models import User
 
 
 def create_user(
@@ -34,10 +33,7 @@ def update_user(
         first_name: str = None,
         last_name: str = None
 ) -> None:
-    try:
-        user = get_user_model().objects.get(id=user_id)
-    except User.DoesNotExist:
-        raise Exception(f"User with id {user_id} does not exist.")
+    user = get_user(user_id)
     if username:
         user.username = username
     if email:
