@@ -12,10 +12,10 @@ def create_order(
     username: str = None,
     date: str = None
 ) -> None:
-    created_at = parse_datetime(date) if date else now()
     order = Order.objects.create(user=User.objects.get(username=username))
-    order.created_at = created_at
-    order.save()
+    if date:
+        order.created_at = date
+        order.save()
     for ticket in tickets:
         Ticket.objects.create(
             movie_session=MovieSession.objects.get(
