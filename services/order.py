@@ -5,7 +5,10 @@ from db.models import MovieSession
 
 
 def create_order(tickets: list, username: str, date: str = None) -> User:
-    user = User.objects.get(username=username)
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise ValueError("No User matches the given query.")
 
     order_date = datetime.fromisoformat(date) if date else datetime.now()
 
