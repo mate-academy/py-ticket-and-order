@@ -1,27 +1,25 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.utils.timezone import now
 from db.models import Order, Ticket, User
 from datetime import datetime
 from django.db.models import QuerySet
 
 
 @transaction.atomic
-def create_order(tickets: list[dict],
-                 username: str,
-                 date: datetime = None) -> Order:
-    try:
-        user = User.objects.get(username=username)
-    except ObjectDoesNotExist:
-        raise ValueError(f"User with username {username} does not exist.")
+def create_order(
+    tickets: list[dict],
+    username: str,
+    date: datetime = None
+) -> Order:
+    user = User.objects.get(username=username)
 
-    order = Order.objects.create(user=user, created_at=date or now())
+    # Створюємо об'єкт Order
+    order = Order.objects.create(user=user)
+    if date:
+        order.created_at = date
+        order.save(update_fields=["created_at"])
 
+    # Створюємо квитки
     for ticket in tickets:
-        if ("movie_session" not in ticket or "row" not in ticket
-                or "seat" not in ticket):
-            raise ValueError(f"Invalid ticket data: {ticket}")
-
         Ticket.objects.create(
             movie_session_id=ticket["movie_session"],
             order=order,
