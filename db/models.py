@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import UniqueConstraint
 
 
+# Custom User model; can be extended in the future
 class User(AbstractUser):
     pass
 
@@ -67,7 +68,8 @@ class Order(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="orders")
+        related_name="orders"
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -83,7 +85,7 @@ class Ticket(models.Model):
         related_name="tickets"
     )
     movie_session = models.ForeignKey(
-        "MovieSession",
+        MovieSession,
         on_delete=models.CASCADE,
         related_name="tickets"
     )
@@ -94,7 +96,8 @@ class Ticket(models.Model):
         constraints = [
             UniqueConstraint(
                 fields=["row", "seat", "movie_session"],
-                name="unique_ticket_constraint")
+                name="unique_ticket_constraint"
+            )
         ]
 
     def clean(self) -> None:
@@ -102,13 +105,13 @@ class Ticket(models.Model):
         if not (1 <= self.row <= cinema_hall.rows):
             raise ValidationError(
                 {"row": f"row number must be "
-                    f"in available range: (1, rows): "
-                    f"(1, {cinema_hall.rows})"})
+                        f"in available range: (1, rows): "
+                        f"(1, {cinema_hall.rows})"})
         if not (1 <= self.seat <= cinema_hall.seats_in_row):
             raise ValidationError(
                 {"seat": f"seat number must "
-                    f"be in available range: (1, seats_in_row): "
-                    f"(1, {cinema_hall.seats_in_row})"})
+                         f"be in available range: (1, seats_in_row): "
+                         f"(1, {cinema_hall.seats_in_row})"})
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()

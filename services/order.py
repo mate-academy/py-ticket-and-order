@@ -3,7 +3,6 @@ from django.db import transaction
 from django.utils.timezone import now
 from db.models import Order, Ticket, User
 from datetime import datetime
-
 from django.db.models import QuerySet
 
 
@@ -14,12 +13,15 @@ def create_order(tickets: list[dict],
     try:
         user = User.objects.get(username=username)
     except ObjectDoesNotExist:
-        raise ValueError(f"User with username "
-                         f"{username} does not exist.")
+        raise ValueError(f"User with username {username} does not exist.")
 
     order = Order.objects.create(user=user, created_at=date or now())
 
     for ticket in tickets:
+        if ("movie_session" not in ticket or "row" not in ticket
+                or "seat" not in ticket):
+            raise ValueError(f"Invalid ticket data: {ticket}")
+
         Ticket.objects.create(
             movie_session_id=ticket["movie_session"],
             order=order,
