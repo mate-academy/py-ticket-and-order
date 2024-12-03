@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from db.models import User
 
 
@@ -20,7 +21,10 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    try:
+        return User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with id {user_id} does not exist.")
 
 
 def update_user(
@@ -31,7 +35,7 @@ def update_user(
     first_name: str = None,
     last_name: str = None,
 ) -> User:
-    user = User.objects.get(id=user_id)
+    user = get_user(user_id)
     if username:
         user.username = username
     if password:

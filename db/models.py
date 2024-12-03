@@ -4,6 +4,10 @@ from django.db import models
 from django.db.models import UniqueConstraint
 
 
+class User(AbstractUser):
+    pass
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -61,7 +65,7 @@ class MovieSession(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        "User",
+        User,
         on_delete=models.CASCADE,
         related_name="orders")
 
@@ -74,7 +78,7 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     order = models.ForeignKey(
-        "Order",
+        Order,
         on_delete=models.CASCADE,
         related_name="tickets"
     )
@@ -113,7 +117,3 @@ class Ticket(models.Model):
     def __str__(self) -> str:
         return (f"<Ticket: {self.movie_session} "
                 f"(row: {self.row}, seat: {self.seat})>")
-
-
-class User(AbstractUser):
-    pass
