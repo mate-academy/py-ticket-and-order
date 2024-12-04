@@ -2,32 +2,38 @@ from django.utils import timezone
 from db.models import User, Ticket, Order, MovieSession
 from typing import Optional
 from django.db import transaction
+from datetime import datetime
 
 
 def create_order(*, username, tickets, date=None):
+    if not tickets:
+        raise ValueError("Список квитків не може бути порожнім.")
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise ValueError(f"Користувач з ім'ям '{username}' не знайдений.")
+
+    created_at = datetime.strptime(date, "%Y-%m-%d %H:%M") if date else timezone.now()
 
     with transaction.atomic():
-        user = User.objects.get(username=username)
+        order = Order.objects.create(user=user, created_at=created_at)
 
-        # Якщо дата не передана, використовуємо поточний час
-        if not date:
-            date = timezone.now()
+        for ticket_data in tickets:
+            try:
+                movie_session = MovieSession.objects.get(id=ticket_data['movie_session'])
+            except MovieSession.DoesNotExist:
+                raise ValueError(f"Сеанс фільму з ID {ticket_data['movie_session']} не знайдено.")
 
-        # Створення замовлення
-        order = Order.objects.create(user=user, created_at=date)
-
-        # Створення квитків для цього замовлення
-        for ticket in tickets:
-            movie_session = MovieSession.objects.get(id=ticket['movie_session'])
             Ticket.objects.create(
-                order=order,
-                row=ticket['row'],
-                seat=ticket['seat'],
-                movie_session=movie_session,
-
+                row=ticket_data['row'],
+                seat=ticket_data['seat'],
+                movie_session=movie_session,  # Правильний тип даних
+                order=order
             )
 
-        return order
+    return order
+
 
 
 

@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import ForeignKey, IntegerField
 from datetime import datetime
+from django.utils import timezone
 
 
 class Genre(models.Model):
@@ -66,7 +67,7 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(default=datetime.now, blank=True)
+    created_at = models.DateTimeField(default=timezone.now, blank=True)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     class Meta:
@@ -102,5 +103,7 @@ class Ticket(models.Model):
             })
 
     def save(self, *args, **kwargs):
+        if not self.movie_session:
+            raise ValueError("The movie_session field must be set before saving.")
         self.full_clean()
         return super().save(*args, **kwargs)

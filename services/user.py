@@ -1,5 +1,5 @@
 from typing import Optional
-
+from django.shortcuts import get_object_or_404
 from db.models import User
 
 
@@ -26,7 +26,7 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(pk=user_id)
+    return get_object_or_404(User, pk=user_id)
 
 
 def update_user(
@@ -37,7 +37,7 @@ def update_user(
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
 ) -> None:
-    user = User.objects.get(id=user_id)
+    user =get_object_or_404(User, id=user_id)
     if username:
         user.username = username
     if password:
