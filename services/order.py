@@ -34,6 +34,6 @@ def get_orders(
     queryset = Order.objects.select_related("User")
 
     if username:
-        queryset.filter(user__username=username)
+        queryset = queryset.filter(user__username=username)
 
     return queryset

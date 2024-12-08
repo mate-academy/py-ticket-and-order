@@ -61,9 +61,16 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return str(self.created_at)
+
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey("MovieSession", on_delete=models.CASCADE)
+    movie_session = models.ForeignKey("MovieSession", on_delete=models.CASCADE,
+                                      related_name="tickets")
     order = models.ForeignKey("Order", on_delete=models.CASCADE)
     row = models.IntegerField()
     seat = models.IntegerField()
@@ -76,7 +83,7 @@ class Ticket(models.Model):
             raise ValidationError(
                 {"row":
                     f"row number must be in available range: "
-                    f" (1, rows): (1, {self.movie_session.cinema_hall.rows})"
+                    f"(1, rows): (1, {self.movie_session.cinema_hall.rows})"
                  })
 
         if self.seat > self.movie_session.cinema_hall.seats_in_row:
