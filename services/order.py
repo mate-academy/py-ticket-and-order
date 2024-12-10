@@ -1,4 +1,7 @@
+from typing import List
+
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from datetime import datetime
 
@@ -8,7 +11,7 @@ from db.models import Order, Ticket
 
 
 @transaction.atomic
-def create_order(tickets: list[dict],
+def create_order(tickets: List[dict],
                  username: str,
                  date: datetime = None) -> Order:
     try:
@@ -25,7 +28,7 @@ def create_order(tickets: list[dict],
                                   )
         return order
     except get_user_model().DoesNotExist:
-        print(f"{username} is not a valid user")
+        raise ValidationError(f"{username} is not a valid user")
 
 
 def get_orders(username: str = None) -> QuerySet:
@@ -34,5 +37,5 @@ def get_orders(username: str = None) -> QuerySet:
             user = get_user_model().objects.get(username=username)
             return user.orders.all()
         except get_user_model().DoesNotExist:
-            print(f"{username} is not a valid user")
+            raise ValidationError(f"{username} is not a valid user")
     return Order.objects.all()

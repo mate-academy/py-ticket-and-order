@@ -39,7 +39,7 @@ def update_user(user_id: int,
     if email:
         user.email = email
     if first_name:
-        user.firstname = first_name
+        user.first_name = first_name
     if last_name:
-        user.lastname = last_name
+        user.last_name = last_name
     user.save()
