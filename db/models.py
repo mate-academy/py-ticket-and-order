@@ -58,8 +58,8 @@ class MovieSession(models.Model):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -83,14 +83,14 @@ class Ticket(models.Model):
         ]
 
     def clean(self):
-        if self.row <= 0 and self.row > self.movie_session.cinema_hall.rows:
+        if self.row > self.movie_session.cinema_hall.rows:
             raise ValidationError({"row": ["Row number must be in available range."]})
-        if self.seat <= 0 and self.seat > self.movie_session.cinema_hall.rows:
+        if self.seat > self.movie_session.cinema_hall.rows:
             raise ValidationError({"seat": ["Seat number must be in available range."]})
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        super.save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"Ticket: {self.movie_session} (row:{self.row}, seat:{self.seat})"

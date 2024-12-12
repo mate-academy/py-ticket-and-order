@@ -8,7 +8,8 @@ def create_user(
     email: str,
     first_name: str,
     last_name: str) -> User:
-    user = User.objects.create_user(username=username, password=password)
+    User = get_user_model()
+    user = User.objects.create(username="username")
     if email:
         user.email = email
     if first_name:
