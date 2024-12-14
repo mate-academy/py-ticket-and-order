@@ -47,9 +47,10 @@ def create_order(
                     id=ticket_data["movie_session"]
                 )
             except MovieSession.DoesNotExist:
-                raise ValidationError(f"Movie session with ID"
-                                      f" {ticket_data["movie_session"]}"
-                                      f" does not exist.")
+                raise ValidationError(
+                    f"Movie session with ID"
+                    f" {ticket_data["movie_session"]}"
+                    f" does not exist.")
 
             Ticket.objects.create(
                 row=ticket_data["row"],
