@@ -95,12 +95,12 @@ class Ticket(models.Model):
         if not (1 <= self.row <= max_rows):
             raise ValidationError({
                 "row": f"row number must be in available range: "
-                f"(1, rows): (1, {max_rows})"
+                        f"(1, rows): (1, {max_rows})"
             })
         if not (1 <= self.seat <= max_seats):
             raise ValidationError({
                 "seat": f"seat number must be in available range: "
-                f"(1, seats_in_row): (1, {max_seats})"
+                        f"(1, seats_in_row): (1, {max_seats})"
             })
 
     def save(self, *args, **kwargs) -> None:
