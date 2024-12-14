@@ -5,13 +5,19 @@ from django.contrib.auth.models import AbstractUser
 
 class Genre(models.Model):
     name = models.CharField(max_length=255, unique=True)
+
     def __str__(self) -> str:
         return self.name
+
+
 class Actor(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -26,6 +32,7 @@ class Movie(models.Model):
     def __str__(self) -> str:
         return self.title
 
+
 class CinemaHall(models.Model):
     name = models.CharField(max_length=255)
     rows = models.IntegerField()
@@ -37,6 +44,7 @@ class CinemaHall(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
 
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
@@ -86,13 +94,13 @@ class Ticket(models.Model):
 
         if not (1 <= self.row <= max_rows):
             raise ValidationError({
-                "row": f"row number must be in available range:"
-                       f" (1, rows): (1, {max_rows})"
+                "row": f"row number must be in available range: "
+                f"(1, rows): (1, {max_rows})"
             })
         if not (1 <= self.seat <= max_seats):
             raise ValidationError({
-                "seat": f"seat number must be in available range:"
-                        f" (1, seats_in_row): (1, {max_seats})"
+                "seat": f"seat number must be in available range: "
+                f"(1, seats_in_row): (1, {max_seats})"
             })
 
     def save(self, *args, **kwargs) -> None:

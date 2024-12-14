@@ -19,7 +19,6 @@ def get_movies(
 
     if actors_ids:
         queryset = queryset.filter(actors__id__in=actors_ids)
-
     return queryset
 
 
@@ -36,8 +35,10 @@ def create_movie(
     with transaction.atomic():
         movie = Movie.objects.create(title=movie_title,
                                      description=movie_description)
+
         if genres_ids:
             movie.genres.set(genres_ids)
+
         if actors_ids:
             movie.actors.set(actors_ids)
         return movie
