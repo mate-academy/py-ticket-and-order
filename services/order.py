@@ -28,10 +28,11 @@ def create_order(
             seat=ticket["seat"],
         )
 
-    def get_orders(username: str = None) -> QuerySet[Order]:
-        if username:
-            return Order.objects.filter(
-                user=get_user_model().objects.get(username=username)
-            )
 
-        return Order.objects.all()
+def get_orders(username: str = None) -> QuerySet[Order]:
+    if username:
+        return Order.objects.filter(
+            user=get_user_model().objects.get(username=username)
+        )
+
+    return Order.objects.all()
