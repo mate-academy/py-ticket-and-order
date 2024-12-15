@@ -68,7 +68,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.created_at.strftime("%Y-%m-%d %H:%M:%S")}"
+        return f"{self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 
     class Meta:
         ordering = ["-created_at"]
@@ -83,7 +83,7 @@ class Ticket(models.Model):
     def __str__(self) -> str:
         return (f"{self.movie_session.movie.title} "
                 f"{self.movie_session.show_time.
-                strftime("%Y-%m-%d %H:%M:%S")} "
+                strftime('%Y-%m-%d %H:%M:%S')} "
                 f"(row: {self.row}, seat: {self.seat})")
 
     def clean(self) -> None:
