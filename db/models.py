@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.conf import settings
 from django.db.models import UniqueConstraint
 
 
@@ -59,7 +60,10 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -72,7 +76,7 @@ class Ticket(models.Model):
     movie_session = models.ForeignKey(
         "MovieSession",
         on_delete=models.CASCADE,
-        related_name="tickets"
+        related_name="tickets",
     )
     order = models.ForeignKey("Order", on_delete=models.CASCADE)
     row = models.IntegerField()
@@ -84,36 +88,30 @@ class Ticket(models.Model):
 
         if not (1 <= self.row <= max_rows):
             raise ValidationError({
-                "row": (
-                    f"row number must be in available range: "
-                    f"(1, rows): (1, {max_rows})"
-                )
+                "row": f"row number must be in available range: "
+                       f"(1, rows): (1, {max_rows})"
             })
         if not (1 <= self.seat <= max_seats):
             raise ValidationError({
-                "seat": (
-                    f"seat number must be in available range: "
-                    f"(1, seats_in_row): (1, {max_seats})"
-                )
+                "seat": f"seat number must be in available range: "
+                        f"(1, seats_in_row): (1, {max_seats})"
             })
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return (
-            f"{self.movie_session.movie.title} "
-            f"{str(self.movie_session.show_time)} "
-            f"(row: {self.row}, seat: {self.seat})"
-        )
+        return (f"{self.movie_session.movie.title} "
+                f"{str(self.movie_session.show_time)} "
+                f"(row: {self.row}, seat: {self.seat})")
 
     class Meta:
         constraints = [
             UniqueConstraint(
                 fields=["row", "seat", "movie_session"],
-                name="unique_row_seat_session",
-            ),
+                name="unique_row_seat_session"
+            )
         ]
 
 
