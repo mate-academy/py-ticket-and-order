@@ -1,8 +1,9 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.db import transaction
 
-from db.models import Ticket, Order, User, MovieSession
+from db.models import Ticket, Order, MovieSession
 
 
 def create_order(tickets: list,
@@ -10,7 +11,8 @@ def create_order(tickets: list,
                  date: datetime = None) -> Ticket:
     with transaction.atomic():
         ticket_objects = []
-        user, user_created = User.objects.get_or_create(username=username)
+        user, user_created = get_user_model(
+        ).objects.get_or_create(username=username)
         order, order_created = Order.objects.get_or_create(user=user)
         if date:
             order.created_at = date
