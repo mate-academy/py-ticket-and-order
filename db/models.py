@@ -63,8 +63,16 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs) -> None:
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
     def __str__(self) -> str:
-        return f"Order by {self.user} on {self.created_at}"
+        return (f"<Order: "
+                f"{self.created_at.strftime("%Y-%m-%d %H:%M:%S")}>")
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class Ticket(models.Model):
