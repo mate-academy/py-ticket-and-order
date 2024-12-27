@@ -8,7 +8,8 @@ def create_user(
         first_name: str = None,
         last_name: str = None
 ) -> None:
-    user = User(username=username, password=password)
+    user = User(username=username)
+    user.set_password(password)
     if email:
         user.email = email
     if password:
