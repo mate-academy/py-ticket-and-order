@@ -33,6 +33,10 @@ def create_movie(
     actors_ids: list = None,
 ) -> Movie:
     with transaction.atomic():
+        if genres_ids is None:
+            genres_ids = []
+        if actors_ids is None:
+            actors_ids = []
         movie = Movie.objects.create(
             title=movie_title,
             description=movie_description,

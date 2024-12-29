@@ -1,8 +1,14 @@
+from django.shortcuts import get_object_or_404
+
 from db.models import User
 
 
 def create_user(username: str, password: str, email: str = None,
                 first_name: str = None, last_name: str = None) -> User:
+    if User.objects.filter(username=username).exists():
+        raise ValueError("A user with this username already exists.")
+    if email and User.objects.filter(email=email).exists():
+        raise ValueError("A user with this email already exists.")
     user = User.objects.create_user(username=username, password=password)
     if email:
         user.email = email
@@ -15,7 +21,7 @@ def create_user(username: str, password: str, email: str = None,
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    return get_object_or_404(User, id=user_id)
 
 
 def update_user(user_id: int, username: str = None, password: str = None, email: str = None,
