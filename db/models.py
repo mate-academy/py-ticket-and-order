@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import UniqueConstraint
 
-import settings
+from django.conf import settings
 
 
 class Genre(models.Model):
@@ -86,7 +86,7 @@ class Ticket(models.Model):
                              name="unique_ticket")
         ]
 
-    def clean(self) -> Exception:
+    def clean(self) -> None:
         if self.row > self.movie_session.cinema_hall.rows:
             raise ValidationError(
                 {"row": [

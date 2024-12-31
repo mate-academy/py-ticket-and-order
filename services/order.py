@@ -2,13 +2,14 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db.models import QuerySet
 
 from db.models import Ticket, Order, MovieSession
 
 
 def create_order(tickets: list,
                  username: str,
-                 date: datetime = None) -> Ticket:
+                 date: datetime = None) -> list[Ticket]:
     with transaction.atomic():
         ticket_objects = []
         user, user_created = get_user_model(
@@ -31,7 +32,7 @@ def create_order(tickets: list,
         return Ticket.objects.bulk_create(ticket_objects)
 
 
-def get_orders(username: str = None) -> Order:
+def get_orders(username: str = None) -> QuerySet:
     if username:
         return Order.objects.filter(user__username=username)
     return Order.objects.all().order_by("-user")
