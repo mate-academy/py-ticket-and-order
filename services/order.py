@@ -25,7 +25,7 @@ def create_order(
                 movie_session_id=ticket["movie_session"],
                 order=order,
                 row=ticket["row"],
-                status=ticket["status"]
+                seat=ticket["seat"]
             )
 
         return order
