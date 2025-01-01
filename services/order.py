@@ -19,7 +19,6 @@ def create_order(
             order.created_at = date
             order.save()
 
-
         for ticket in tickets:
             Ticket.objects.create(
                 movie_session_id=ticket["movie_session"],
