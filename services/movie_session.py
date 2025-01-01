@@ -29,7 +29,6 @@ def get_taken_seats(movie_session_id: int) -> list[dict]:
     )
 
 
-
 def get_movie_session_by_id(movie_session_id: int) -> MovieSession:
     return MovieSession.objects.get(id=movie_session_id)
 
