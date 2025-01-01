@@ -83,12 +83,14 @@ class Ticket(models.Model):
         )
 
     def clean(self) -> None:
-        if not (
-                self.row <= self.movie_session.cinema_hall.rows
-                and self.seat <= self.movie_session.cinema_hall.seats_in_row
-        ):
+        if not (self.row <= self.movie_session.cinema_hall.rows):
             raise ValidationError(
-                "Row or seat exceeds the cinema hall's limits."
+                "Row exceeds the cinema hall's limits."
+            )
+
+        if not (self.seat <= self.movie_session.cinema_hall.seats_in_row):
+            raise ValidationError(
+                "Seat exceeds the cinema hall's limits."
             )
 
     def save(self, *args, **kwargs) -> None:
