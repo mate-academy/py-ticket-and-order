@@ -26,7 +26,7 @@ def get_taken_seats(movie_session_id: int) -> list[dict]:
         for hall
         in MovieSession.objects
         .get(id=movie_session_id)
-        .cinema_hall.objects.all()
+        .cinema_hall.all()
     ]
 
 
