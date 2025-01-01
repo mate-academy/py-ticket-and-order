@@ -16,7 +16,7 @@ def create_order(
     with transaction.atomic():
         order_data = {"user": get_user_model().objects.get(username=username)}
         if date:
-            order_data["date"] = date
+            order_data["created_at"] = date
 
         order = Order.objects.create(**order_data)
 
