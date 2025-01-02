@@ -11,10 +11,12 @@ def create_order(
     username: str,
     date: datetime = None,
 ) -> None:
+    try:
+        user = get_user_model().objects.get(username=username)
+    except get_user_model().DoesNotExist:
+        raise ValueError(f"User with username '{username}' does not exist.")
 
-    order = Order.objects.create(
-        user=get_user_model().objects.get(username=username)
-    )
+    order = Order.objects.create(user=user)
 
     for ticket in tickets:
         if date:

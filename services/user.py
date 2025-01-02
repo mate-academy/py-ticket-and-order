@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from db.models import User
 
 
@@ -25,7 +26,10 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return get_user_model().objects.get(pk=user_id)
+    try:
+        return get_user_model().objects.get(pk=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"Користувача з ID {user_id} не знайдено.")
 
 
 def update_user(
