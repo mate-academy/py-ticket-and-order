@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import QuerySet
@@ -15,7 +14,7 @@ def create_order(tickets: list[dict[str: all]],
 
     try:
         user = get_user_model().objects.get(username=username)
-    except AbstractBaseUser.DoesNotExist:
+    except get_user_model().DoesNotExist:
         raise ValidationError(f"User '{username}' does not exist.")
 
     with transaction.atomic():

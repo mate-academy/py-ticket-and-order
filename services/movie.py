@@ -1,3 +1,5 @@
+from typing import Optional, List
+
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import QuerySet
@@ -6,8 +8,8 @@ from db.models import Movie
 
 
 def get_movies(
-    genres_ids: list[int] = None,
-    actors_ids: list[int] = None,
+    genres_ids: Optional[List[int]] = None,
+    actors_ids: Optional[List[int]] = None,
     title: str = None
 ) -> QuerySet:
     queryset = Movie.objects.all()
