@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+
 from db.models import User
 from typing import Optional
 
@@ -23,7 +25,10 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    try:
+        return User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with ID {user_id} does not exist.")
 
 
 def update_user(
@@ -34,7 +39,11 @@ def update_user(
         first_name: Optional[str] = None,
         last_name: Optional[str] = None
 ) -> User:
-    user = get_user(user_id)
+    try:
+        user = get_user(user_id)
+    except ValueError as e:
+        raise e
+
     if username:
         user.username = username
     if password:
@@ -45,5 +54,10 @@ def update_user(
         user.first_name = first_name
     if last_name:
         user.last_name = last_name
-    user.save()
+
+    try:
+        user.save()
+    except ValidationError as e:
+        raise ValueError(f"Error updating user: {e}")
+
     return user
