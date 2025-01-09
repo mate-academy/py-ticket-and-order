@@ -20,7 +20,7 @@ def create_order(
 
         Ticket.objects.bulk_create(
             Ticket(
-                movie_session=MovieSession.objects.get(
+                movie_session=MovieSession.objects.get_or_create(
                     pk=ticket["movie_session"]
                 ),
                 row=ticket["row"],
