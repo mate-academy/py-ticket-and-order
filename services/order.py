@@ -22,7 +22,7 @@ def create_order(
             Ticket(
                 movie_session=MovieSession.objects.get_or_create(
                     pk=ticket["movie_session"]
-                ),
+                )[0],
                 row=ticket["row"],
                 seat=ticket["seat"],
                 order=order,
