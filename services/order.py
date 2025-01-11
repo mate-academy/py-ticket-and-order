@@ -30,7 +30,7 @@ def create_order(tickets: List[dict[str, Any]],
             raise (
                 ValueError
                 (f"MovieSession "
-                 f"with id {ticket["movie_session"]} does not exist")
+                 f"with id {ticket['movie_session']} does not exist")
             )
         ticket_objects.append(Ticket(
             movie_session=movie_session,
