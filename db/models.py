@@ -30,7 +30,7 @@ class Movie(models.Model):
     genres = models.ManyToManyField(to=Genre, related_name="movies")
 
     class Meta:
-        indexes = ("title",)
+        indexes = (models.Index(fields=("title",), name="title_index"),)
 
     def __str__(self) -> str:
         return self.title
@@ -72,7 +72,7 @@ class Order(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self) -> str:
-        return f"<Order: {self.created_at}>"
+        return f"{self.created_at}"
 
 
 class Ticket(models.Model):
@@ -89,15 +89,23 @@ class Ticket(models.Model):
                                         name="unique_movie_session"),)
 
     def __str__(self) -> str:
-        return (f"<Ticket: {self.movie_session.movie.title} "
+        return (f"{self.movie_session.movie.title} "
                 f"{self.movie_session.show_time} "
-                f"(row: {self.row}, seat: {self.seat})>")
+                f"(row: {self.row}, seat: {self.seat})")
 
     def clean(self) -> None:
-        if not (self.row <= self.movie_session.cinema_hall.rows and self.seat
-                <= self.movie_session.cinema_hall.seats_in_row):
-            raise ValidationError
+        hall_row = self.movie_session.cinema_hall.rows
+        hall_seat = self.movie_session.cinema_hall.seats_in_row
+
+        if 1 > self.row or self.row > self.movie_session.cinema_hall.rows:
+            raise ValidationError(
+                {'row': ['row number must be in available range: (1, rows): (1, 10)']}
+            )
+        if 1 > self.seat or self.seat > self.movie_session.cinema_hall.seats_in_row:
+            raise ValidationError(
+                {'seat': ['seat number must be in available range: (1, seats_in_row): (1, 12)']}
+            )
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()
-        super().save(self, *args, **kwargs)
+        super().save(*args, **kwargs)
