@@ -21,6 +21,3 @@ def get_order(username: str = None) -> Order:
     if username:
         return Order.objects.filter(username=username)
     return Order.objects.all()
-
-
-

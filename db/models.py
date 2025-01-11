@@ -64,7 +64,9 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="orders")
+    user = models.ForeignKey(to=User,
+                             on_delete=models.CASCADE,
+                             related_name="orders")
 
     class Meta:
         ordering = ("-created_at",)
@@ -74,24 +76,28 @@ class Order(models.Model):
 
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey(to=MovieSession, on_delete=models.CASCADE)
+    movie_session = models.ForeignKey(to=MovieSession,
+                                      on_delete=models.CASCADE)
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE)
     row = models.IntegerField()
     seat = models.IntegerField()
 
     class Meta:
-        constraints = (UniqueConstraint(fields=("row", "seat", "movie_session"),
+        constraints = (UniqueConstraint(fields=("row",
+                                                "seat",
+                                                "movie_session"),
                                         name="unique_movie_session"),)
 
     def __str__(self) -> str:
-        return (f"<Ticket: {self.movie_session.movie.title} {self.movie_session.show_time} "
+        return (f"<Ticket: {self.movie_session.movie.title} "
+                f"{self.movie_session.show_time} "
                 f"(row: {self.row}, seat: {self.seat})>")
 
-    def clean(self):
-        if not (self.row <= self.movie_session.cinema_hall.rows and self.seat <=
-                self.movie_session.cinema_hall.seats_in_row):
+    def clean(self) -> None:
+        if not (self.row <= self.movie_session.cinema_hall.rows and self.seat
+                <= self.movie_session.cinema_hall.seats_in_row):
             raise ValidationError
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(self, *args, **kwargs)
