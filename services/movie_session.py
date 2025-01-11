@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from django.db.models import QuerySet
 
@@ -43,9 +43,12 @@ def update_movie_session(
 
 
 def delete_movie_session_by_id(session_id: int) -> None:
-    MovieSession.objects.get(id=session_id).delete()
+    try:
+        MovieSession.objects.get(id=session_id).delete()
+    except MovieSession.DoesNotExist:
+        return None
 
 
-def get_taken_seats(movie_session_id: int) -> list[dict[str, Any]]:
+def get_taken_seats(movie_session_id: int) -> List[dict[str, Any]]:
     ticket = Ticket.objects.filter(movie_session=movie_session_id)
     return [{"row": movie.row, "seat": movie.seat} for movie in ticket]

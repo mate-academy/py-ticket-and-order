@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import transaction
 from django.db.models import QuerySet
 
@@ -5,8 +7,8 @@ from db.models import Movie
 
 
 def get_movies(
-    genres_ids: list[int] = None,
-    actors_ids: list[int] = None,
+    genres_ids: List[int] = None,
+    actors_ids: List[int] = None,
     title: str = None,
 ) -> QuerySet:
     queryset = Movie.objects.all()
@@ -22,8 +24,11 @@ def get_movies(
     return queryset
 
 
-def get_movie_by_id(movie_id: int) -> Movie:
-    return Movie.objects.get(id=movie_id)
+def get_movie_by_id(movie_id: int) -> Movie | None:
+    try:
+        return Movie.objects.get(id=movie_id)
+    except Movie.DoesNotExist:
+        return None
 
 
 @transaction.atomic

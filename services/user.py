@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.hashers import make_password
 
 
@@ -9,7 +8,7 @@ def create_user(
         email: str = None,
         first_name: str = None,
         last_name: str = None,
-) -> AbstractBaseUser:
+) -> get_user_model():
     encrypted_password = make_password(password)
     user = get_user_model().objects.create(
         username=username,
@@ -25,8 +24,11 @@ def create_user(
     return user
 
 
-def get_user(user_id: int) -> AbstractBaseUser:
-    return get_user_model().objects.get(id=user_id)
+def get_user(user_id: int) -> get_user_model() | None:
+    try:
+        return get_user_model().objects.get(id=user_id)
+    except get_user_model().DoesNotExist:
+        return None
 
 
 def update_user(user_id: int,
@@ -35,7 +37,7 @@ def update_user(user_id: int,
                 email: str = None,
                 first_name: str = None,
                 last_name: str = None
-                ) -> AbstractBaseUser:
+                ) -> get_user_model():
     user = get_user(user_id)
     if username:
         user.username = username
