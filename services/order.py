@@ -24,9 +24,13 @@ def create_order(tickets: List[dict[str, Any]],
         row = ticket["row"]
         seat = ticket["seat"]
         try:
-            movie_session = MovieSession.objects.get(id=ticket["movie_session"])
+            movie_session = (
+                MovieSession.objects.get(id=ticket["movie_session"]))
         except MovieSession.DoesNotExist:
-            raise ValueError(f"MovieSession with id {ticket['movie_session']} does not exist")
+            raise (
+                ValueError(f"MovieSession with id "
+                           f"{ticket["movie_session"]} "
+                           f"does not exist"))
         ticket_objects.append(Ticket(
             movie_session=movie_session,
             order=order,
@@ -34,7 +38,6 @@ def create_order(tickets: List[dict[str, Any]],
             seat=seat
         ))
     return Ticket.objects.bulk_create(ticket_objects)
-
 
 
 def get_orders(username: str = None) -> QuerySet[Order]:
