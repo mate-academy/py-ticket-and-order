@@ -16,10 +16,11 @@ def create_order(tickets: list[dict],
 
         tickets_data = []
         for ticket in tickets:
-            movie_session = MovieSession.objects.get(id=ticket['movie_session'])
+            movie_session = MovieSession.objects.get(
+                id=ticket["movie_session"])
             tickets_data.append(Ticket(order=order,
-                                       row=ticket['row'],
-                                       seat=ticket['seat'],
+                                       row=ticket["row"],
+                                       seat=ticket["seat"],
                                        movie_session=movie_session))
         Ticket.objects.bulk_create(tickets_data)
 
