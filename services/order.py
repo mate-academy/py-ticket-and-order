@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 from django.db import transaction
 from django.db.models import QuerySet
 
-from db.models import Order, Ticket
+from db.models import Order, Ticket, User
 
 
 @transaction.atomic
@@ -13,7 +13,7 @@ def create_order(
         date: str = None
 ) -> None:
 
-    user = get_user_model().objects.get(username=username)
+    user = get_object_or_404(User, username=username)
     order = Order.objects.create(user=user)
 
     if date:
