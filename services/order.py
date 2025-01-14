@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
