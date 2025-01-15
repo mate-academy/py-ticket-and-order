@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0002_user_order_alter_movie_actors_alter_movie_genres_and_more'),
+        ('db', '0002'),
     ]
 
     operations = [
