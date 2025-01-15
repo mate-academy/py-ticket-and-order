@@ -6,7 +6,13 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from db.models import User
 
 
-def create_user(username: str, password: str, email: str = None, first_name: str = None, last_name: str = None) -> User:
+def create_user(
+        username: str,
+        password: str,
+        email: str = None,
+        first_name: str = None,
+        last_name: str = None
+) -> User:
     user_model = get_user_model()
     user = user_model.objects.create_user(username=username, password=password)
     if email:
@@ -18,8 +24,10 @@ def create_user(username: str, password: str, email: str = None, first_name: str
     user.save()
     return user
 
+
 def get_user(user_id: int) -> AbstractBaseUser:
     return get_user_model().objects.get(pk=user_id)
+
 
 def update_user(
     user_id: int,
