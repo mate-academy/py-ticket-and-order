@@ -94,7 +94,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='db.actor'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='db.user'),
         ),
         migrations.AddField(
             model_name='ticket',
