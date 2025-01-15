@@ -13,7 +13,9 @@ def create_order(
         username: str,
         date: str = None
 ) -> None:
-    order = Order.objects.create(user=get_object_or_404(User, username=username))
+    order = Order.objects.create(
+        user=get_object_or_404(User, username=username)
+    )
 
     if date:
         order_date = datetime.strptime(date, "%Y-%m-%d %H:%M")
