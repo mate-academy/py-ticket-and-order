@@ -58,10 +58,12 @@ class MovieSession(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="users"
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="users"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.created_at)
 
     class Meta:
@@ -78,17 +80,17 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{self.movie_session.movie.title} "
             f"{str(self.movie_session.show_time)} "
             f"(row: {self.row}, seat: {self.seat})"
         )
 
-    def clean(self):
+    def clean(self) -> None:
         rows = self.movie_session.cinema_hall.rows
         seats = self.movie_session.cinema_hall.seats_in_row
-        if not(1 <= self.row <= rows):
+        if not (1 <= self.row <= rows):
             raise ValidationError(
                 {
                     "row": [
@@ -97,24 +99,26 @@ class Ticket(models.Model):
                     ]
                 }
             )
-        if not(1 <= self.seat <= seats):
+        if not (1 <= self.seat <= seats):
             raise ValidationError(
                 {
                     "seat": [
-                        f"seat number must be in available range: (1, seats_in_row): "
-                        f"(1, {seats})"
+                        f"seat number must be in available range: "
+                        f"(1, seats_in_row): (1, {seats})"
                     ]
                 }
             )
 
-
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["row", "seat", "movie_session"], name="unique_row_seat_movie_session")
+            models.UniqueConstraint(
+                fields=["row", "seat", "movie_session"],
+                name="unique_row_seat_movie_session"
+            )
         ]
 
 
