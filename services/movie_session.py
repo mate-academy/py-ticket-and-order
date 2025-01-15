@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import QuerySet
 
 from db.models import MovieSession
@@ -16,7 +18,7 @@ def create_movie_session(
 
 
 def get_movies_sessions(
-        session_date: str = None
+        session_date: datetime = None
 ) -> QuerySet:
     queryset = MovieSession.objects.all()
     if session_date:
@@ -55,14 +57,14 @@ def delete_movie_session_by_id(
 def get_taken_seats(
         movie_session_id: int
 ) -> list[dict]:
-    result = []
-
     movie_session = MovieSession.objects.get(id=movie_session_id)
 
-    for tickets in movie_session.tickets.all():
-        result.append({
+    result = [
+        {
             "row": tickets.row,
             "seat": tickets.seat,
-        })
+        }
+        for tickets in movie_session.tickets.all()
+    ]
 
     return result
