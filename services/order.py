@@ -17,7 +17,10 @@ def create_order(tickets: list,
                 date = datetime.strptime(date, "%Y-%m-%d %H:%M")
 
         with transaction.atomic():
-            user = User.objects.get(username=username)
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                raise Exception("User does not exist")
 
             order = Order.objects.create(user=user)
 
