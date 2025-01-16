@@ -25,7 +25,11 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return get_user_model().objects.get(pk=user_id)
+    try:
+        user_to_get = get_user_model().objects.get(pk=user_id)
+    except get_user_model().DoesNotExist:
+        print(f"User with id: {user_id} not found")
+    return user_to_get
 
 
 def update_user(
@@ -36,7 +40,11 @@ def update_user(
         first_name: str = None,
         last_name: str = None,
 ) -> User:
-    user_to_update = get_user_model().objects.get(pk=user_id)
+    try:
+        user_to_update = get_user_model().objects.get(pk=user_id)
+    except get_user_model().DoesNotExist:
+        print(f"User with id: {user_id} not found")
+
     if username is not None:
         user_to_update.username = username
     if password is not None:

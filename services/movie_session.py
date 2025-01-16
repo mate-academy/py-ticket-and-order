@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from django.db.models import QuerySet
 
 from db.models import MovieSession, Ticket
@@ -41,9 +43,13 @@ def update_movie_session(
 
 
 def delete_movie_session_by_id(session_id: int) -> None:
-    MovieSession.objects.get(id=session_id).delete()
+    try:
+        movie_session_to_delete = MovieSession.objects.get(id=session_id)
+        movie_session_to_delete.delete()
+    except MovieSession.DoesNotExist:
+        print(f"No Movie session with id {session_id}")
 
 
-def get_taken_seats(movie_session_id: int) -> list[dict]:
+def get_taken_seats(movie_session_id: int) -> List[Dict]:
     tickets = Ticket.objects.filter(movie_session=movie_session_id)
     return [{"row": ticket.row, "seat": ticket.seat} for ticket in tickets]
