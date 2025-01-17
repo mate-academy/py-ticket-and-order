@@ -14,11 +14,11 @@ def create_user(
         username=username,
         password=password,
     )
-    if email is not None:
+    if email:
         new_user.email = email
-    if first_name is not None:
+    if first_name:
         new_user.first_name = first_name
-    if last_name is not None:
+    if last_name:
         new_user.last_name = last_name
     new_user.save()
     return new_user
@@ -45,14 +45,14 @@ def update_user(
     except get_user_model().DoesNotExist:
         print(f"User with id: {user_id} not found")
 
-    if username is not None:
+    if username:
         user_to_update.username = username
-    if password is not None:
+    if password:
         user_to_update.set_password(password)
-    if email is not None:
+    if email:
         user_to_update.email = email
-    if first_name is not None:
+    if first_name:
         user_to_update.first_name = first_name
-    if last_name is not None:
+    if last_name:
         user_to_update.last_name = last_name
     user_to_update.save()

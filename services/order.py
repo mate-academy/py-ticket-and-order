@@ -30,18 +30,17 @@ def create_order(
                     movie_session = MovieSession.objects.get(
                         id=ticket["movie_session"]
                     )
+                    Ticket.objects.create(
+                        order=new_order,
+                        movie_session=movie_session,
+                        row=ticket["row"],
+                        seat=ticket["seat"]
+                    )
                 except MovieSession.DoesNotExist:
                     print(f"No movie session with id: {ticket['id']} found")
-                    continue
-                Ticket.objects.create(
-                    order=new_order,
-                    movie_session=movie_session,
-                    row=ticket["row"],
-                    seat=ticket["seat"]
-                )
 
 
 def get_orders(username: str = None) -> QuerySet[Order]:
-    if username is not None:
+    if username:
         return Order.objects.filter(user__username=username)
     return Order.objects.all()
