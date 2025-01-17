@@ -84,6 +84,14 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["row", "seat", "movie_session"],
+                name="unique_draft_row"
+            )
+        ]
+
     def clean(self) -> None:
         if self.seat > self.movie_session.cinema_hall.seats_in_row:
             raise ValidationError(
@@ -102,13 +110,6 @@ class Ticket(models.Model):
                 }
             )
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["row", "seat", "movie_session"],
-                name="unique_draft_row"
-            )
-        ]
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()
