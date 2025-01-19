@@ -16,9 +16,7 @@ def create_order(tickets: list[dict], username: str,
 
         if date:
             order.created_at = date
-        else:
-            order.created_at = datetime.now()
-        order.save()
+            order.save()
 
         for ticket in tickets:
             new_ticket = Ticket(movie_session_id=ticket["movie_session"],
@@ -29,7 +27,7 @@ def create_order(tickets: list[dict], username: str,
         return order
 
 
-def get_orders(username: str = None) -> QuerySet | Order:
+def get_orders(username: str = None) -> QuerySet:
     if username:
         return Order.objects.filter(user__username=username)
     else:

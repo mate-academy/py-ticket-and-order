@@ -78,8 +78,8 @@ class Ticket(models.Model):
     )
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE,
                               related_name="order_tickets")
-    row = models.IntegerField()
-    seat = models.IntegerField()
+    row = models.PositiveIntegerField()
+    seat = models.PositiveIntegerField()
 
     def clean(self) -> None:
         if not (1 <= self.seat <= self.movie_session.cinema_hall.seats_in_row):
