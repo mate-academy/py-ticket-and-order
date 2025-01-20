@@ -110,10 +110,10 @@ class Ticket(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
-    class Meta:
-        constraints = [
-            UniqueConstraint(fields=["row", "seat"], name="unique_ticket")
-        ]
+        class Meta:
+            constraints = [
+                UniqueConstraint(fields=["row", "seat"], name="unique_ticket")
+            ]
 
 
 class User(AbstractUser):
