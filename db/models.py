@@ -63,16 +63,18 @@ class Order(models.Model):
         related_name="orders"
     )
 
-    def __str__(self) -> str:
-        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-
     class Meta:
         ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
 
 class Ticket(models.Model):
     movie_session = models.ForeignKey(
-        to=MovieSession, on_delete=models.CASCADE, related_name="tickets"
+        MovieSession,
+        on_delete=models.CASCADE,
+        related_name="tickets"
     )
     order = models.ForeignKey(
         Order,
@@ -81,6 +83,14 @@ class Ticket(models.Model):
     )
     row = models.IntegerField()
     seat = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_ticket_per_session"
+            )
+        ]
 
     def __str__(self) -> str:
         return (f"{self.movie_session.movie.title} "
@@ -109,13 +119,6 @@ class Ticket(models.Model):
         self.full_clean()
         super(Ticket, self).save(*args, **kwargs)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["movie_session", "row", "seat"],
-                name="unique_ticket_per_session"
-            )
-        ]
 
 
 class User(AbstractUser): # noqa
