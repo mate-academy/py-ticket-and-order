@@ -23,6 +23,9 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
+    if not user_id:
+        raise ValueError("user_id is required")
+
     return User.objects.get(id=user_id)
 
 
@@ -35,6 +38,8 @@ def update_user(
         last_name: str = None
 ) -> User:
     user = User.objects.get(id=user_id)
+    if not user_id:
+        raise ValueError("user_id is required")
     if username:
         user.username = username
     if password:

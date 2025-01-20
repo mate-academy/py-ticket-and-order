@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -135,6 +133,5 @@ class Ticket(models.Model):
         super().save(*args, **kwargs)
 
 
-@abstractmethod
 class User(AbstractUser):
     pass

@@ -1,3 +1,5 @@
+from typing import List, Dict, Any
+
 from django.db.models import QuerySet
 
 from db.models import Order, Ticket, User
@@ -5,9 +7,17 @@ from django.db import transaction
 
 
 @transaction.atomic
-def create_order(tickets: list, username: str, date: str = None) -> Order:
+def create_order(
+        tickets: List[Dict[str, Any]],
+        username: str,
+        date: str = None
+) -> Order:
     user = User.objects.get(username=username)
     order = Order.objects.create(user=user, created_at=date)
+
+    if not user:
+        raise Exception("User doesn't exist")
+
     if date:
         order.created_at = date
         order.save()
