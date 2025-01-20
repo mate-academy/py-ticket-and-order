@@ -20,8 +20,13 @@ def get_movies_sessions(session_date: str = None) -> QuerySet:
     return queryset
 
 
-def get_movie_session_by_id(movie_session_id: int) -> MovieSession:
-    return MovieSession.objects.get(id=movie_session_id)
+def get_movie_session_by_id(movie_session_id: int) -> bool:
+    try:
+        session = MovieSession.objects.get(id=movie_session_id)
+        session.delete()
+        return True
+    except MovieSession.DoesNotExist:
+        return False
 
 
 def update_movie_session(

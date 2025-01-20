@@ -12,20 +12,37 @@ def create_order(
         username: str,
         date: datetime = None
 ) -> Order:
-    user = User.objects.get(username=username)
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise ValueError(f"User with username '{username}' does not exist.")
 
     order = Order.objects.create(user=user)
     if date:
         order.created_at = date
         order.save()
 
-    movie_session_ids = {ticket["movie_session"] for ticket in tickets}
-    movie_sessions = MovieSession.objects.in_bulk(movie_session_ids)
+    try:
+        movie_session_ids = set()
 
-    if missing_sessions := movie_session_ids - set(movie_sessions.keys()):
-        raise ValueError(
-            f"Movie sessions with IDs {missing_sessions} do not exist."
-        )
+        for ticket in tickets:
+            if "movie_session" not in ticket or not isinstance(
+                    ticket["movie_session"], int
+            ):
+                raise ValueError(
+                    "Each ticket must include a valid 'movie_session' ID."
+                )
+            movie_session_ids.add(ticket["movie_session"])
+
+        movie_sessions = MovieSession.objects.in_bulk(movie_session_ids)
+
+        if missing_sessions := movie_session_ids - set(movie_sessions.keys()):
+            raise ValueError(
+                f"Movie sessions with IDs {missing_sessions} do not exist."
+            )
+
+    except Exception as e:
+        raise ValueError(f"Error validating movie sessions: {e}")
 
     ticket_objects = [
         Ticket(
