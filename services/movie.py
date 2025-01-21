@@ -1,13 +1,15 @@
 from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 from db.models import Movie
 
 
 def get_movies(
-        genres_ids: list[int] = None,
-        actors_ids: list[int] = None,
-        title: str = None) -> QuerySet:
+    genres_ids: list[int] = None,
+    actors_ids: list[int] = None,
+    title: str = None,
+) -> QuerySet:
     """
-    Retrieve movies based on optional filters for genres, actors, and title.
+    Retrieve movies based on optional filt for genres, actors, and title.
     """
     queryset = Movie.objects.all()
 
@@ -22,8 +24,11 @@ def get_movies(
 
 
 def get_movie_by_id(movie_id: int) -> Movie:
-    """Retrieve a movie by its ID."""
-    return Movie.objects.get(id=movie_id)
+    """
+    Retrieve a movie by its ID.
+    Raises a 404 error if the movie does not exist.
+    """
+    return get_object_or_404(Movie, id=movie_id)
 
 
 def create_movie(

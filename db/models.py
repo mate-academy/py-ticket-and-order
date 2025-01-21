@@ -45,11 +45,13 @@ class CinemaHall(models.Model):
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
     cinema_hall = models.ForeignKey(
-        to=CinemaHall, on_delete=models.CASCADE,
+        to=CinemaHall,
+        on_delete=models.CASCADE,
         related_name="movie_sessions"
     )
     movie = models.ForeignKey(
-        to=Movie, on_delete=models.CASCADE,
+        to=Movie,
+        on_delete=models.CASCADE,
         related_name="movie_sessions"
     )
 
@@ -76,10 +78,14 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     movie_session = models.ForeignKey(
-        to=MovieSession, on_delete=models.CASCADE, related_name="tickets"
+        to=MovieSession,
+        on_delete=models.CASCADE,
+        related_name="tickets"
     )
     order = models.ForeignKey(
-        to=Order, on_delete=models.CASCADE, related_name="tickets"
+        to=Order,
+        on_delete=models.CASCADE,
+        related_name="tickets"
     )
     row = models.IntegerField()
     seat = models.IntegerField()
@@ -87,8 +93,8 @@ class Ticket(models.Model):
     def __str__(self) -> str:
         return (
             f"<Ticket: {self.movie_session.movie.title} "
-            f"{self.movie_session.show_time} (row: {self.row}, "
-            f"seat: {self.seat})>"
+            f"{self.movie_session.show_time} "
+            f"(row: {self.row}, seat: {self.seat})>"
         )
 
     def clean(self) -> None:
@@ -101,7 +107,15 @@ class Ticket(models.Model):
         if not (1 <= self.seat <= cinema_hall.seats_in_row):
             raise ValidationError(
                 {"seat": f"seat number must be in available range: "
-                 f"(1, {cinema_hall.seats_in_row})"})
+                    f"(1, {cinema_hall.seats_in_row})"})
+
+        # Check for duplicate bookings
+        if Ticket.objects.filter(
+            movie_session=self.movie_session,
+            row=self.row, seat=self.seat
+        ).exists():
+            raise ValidationError(
+                "This seat is already booked for the selected session.")
 
     def save(self, *args: tuple, **kwargs: dict) -> None:
         self.full_clean()  # Ensures clean() is called before saving
