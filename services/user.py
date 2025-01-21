@@ -23,7 +23,7 @@ def create_user(username: str,
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    return User.objects.filter(id=user_id).first()
 
 
 def update_user(user_id: int,
@@ -32,8 +32,10 @@ def update_user(user_id: int,
                 email: str = None,
                 first_name: str = None,
                 last_name: str = None) -> None:
-    user = User.objects.get(id=user_id)
-    if username:
+    user = User.objects.filter(id=user_id).first()
+    if not user:
+        return None
+    if username and username not in User.objects.values_list("username"):
         user.username = username
     if password:
         user.set_password(password)

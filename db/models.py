@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
@@ -65,7 +65,7 @@ class MovieSession(models.Model):
 class Order(models.Model):
     class Meta:
         ordering = ["-created_at"]
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
