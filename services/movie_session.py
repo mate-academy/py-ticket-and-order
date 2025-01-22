@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 
-from db.models import MovieSession
+from db.models import MovieSession, Ticket
 
 
 def create_movie_session(
@@ -21,7 +21,7 @@ def get_movies_sessions(session_date: str = None) -> QuerySet:
 
 
 def get_movie_session_by_id(movie_session_id: int) -> MovieSession:
-    return MovieSession.objects.get(id=movie_session_id)
+    return MovieSession.get_with_check(id=movie_session_id)
 
 
 def update_movie_session(
@@ -41,4 +41,17 @@ def update_movie_session(
 
 
 def delete_movie_session_by_id(session_id: int) -> None:
-    MovieSession.objects.get(id=session_id).delete()
+    MovieSession.get_with_check(id=session_id).delete()
+    # try:
+    #     MovieSession.objects.get(id=session_id).delete()
+    # except MovieSession.DoesNotExist:
+    #     print(f"MovieSession with id {session_id} does not exist")
+
+
+def get_taken_seats(movie_session_id: int) -> list[dict]:
+    taken_seats = []
+    movie_session = get_movie_session_by_id(movie_session_id)
+    tickets_session = Ticket.objects.filter(movie_session=movie_session)
+    for ticket in tickets_session:
+        taken_seats.append({"row": ticket.row, "seat": ticket.seat})
+    return taken_seats
