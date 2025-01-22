@@ -1,3 +1,6 @@
+import logging
+from typing import Optional
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -57,11 +60,12 @@ class MovieSession(models.Model):
     )
 
     @classmethod
-    def get_with_check(cls, **kwargs) -> "MovieSession" or None:
+    def get_with_check(cls, **kwargs) -> Optional["MovieSession"]:
+        logger = logging.getLogger(__name__)
         try:
             return cls.objects.get(**kwargs)
         except MovieSession.DoesNotExist:
-            print("Object does not exist.")
+            logger.error("Object does not exist.")
             return None
 
     def __str__(self) -> str:
@@ -132,11 +136,12 @@ class User(AbstractUser):
         return str(self.username)
 
     @classmethod
-    def get_with_check(cls, **kwargs) -> "User" or None:
+    def get_with_check(cls, **kwargs) -> Optional["User"]:
+        logger = logging.getLogger(__name__)
         try:
             return cls.objects.get(**kwargs)
         except User.DoesNotExist:
-            print("Object does not exist.")
+            logger.error("Object does not exist.")
             return None
 
     class Meta:
