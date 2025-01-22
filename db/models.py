@@ -56,6 +56,14 @@ class MovieSession(models.Model):
         to=Movie, on_delete=models.CASCADE, related_name="movie_sessions"
     )
 
+    @classmethod
+    def get_with_check(cls, **kwargs) -> "MovieSession" or None:
+        try:
+            return cls.objects.get(**kwargs)
+        except MovieSession.DoesNotExist:
+            print("Object does not exist.")
+            return None
+
     def __str__(self) -> str:
         return f"{self.movie.title} {str(self.show_time)}"
 
@@ -120,4 +128,16 @@ class Ticket(models.Model):
 
 
 class User(AbstractUser):
-    pass
+    def __str__(self) -> str:
+        return str(self.username)
+
+    @classmethod
+    def get_with_check(cls, **kwargs) -> "User" or None:
+        try:
+            return cls.objects.get(**kwargs)
+        except User.DoesNotExist:
+            print("Object does not exist.")
+            return None
+
+    class Meta:
+        verbose_name_plural = "users"
