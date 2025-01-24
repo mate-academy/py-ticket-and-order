@@ -1,8 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
-
-from settings import AUTH_USER_MODEL
 
 
 class Genre(models.Model):
@@ -77,7 +76,7 @@ class MovieSession(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        to=AUTH_USER_MODEL,
+        to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="orders"
     )
