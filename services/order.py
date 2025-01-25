@@ -8,10 +8,12 @@ def create_order(
         tickets: list[dict],
         username: str,
         date: str = None
-) -> None:
-    with transaction.atomic():
+) -> None | str:
+    try:
         user = User.objects.get(username=username)
-
+    except User.DoesNotExist:
+        return f"User {username} does not exist"
+    with transaction.atomic():
         order = Order.objects.create(user=user)
         if date:
             order.created_at = date
