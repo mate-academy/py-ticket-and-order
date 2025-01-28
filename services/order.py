@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from db.models import Order, Ticket, User
+from db.models import Order, Ticket
 from django.db import transaction
 from db.models import User
 
 
-def create_order(tickets: list[dict], username: str, date: datetime = None):
+def create_order(tickets: list[dict], username: str, date: datetime = None) -> None:
     with transaction.atomic():
         user = User.objects.get(username=username)
         new_order = Order.objects.create(user=user)
@@ -28,7 +28,7 @@ def create_order(tickets: list[dict], username: str, date: datetime = None):
         new_order.save()
 
 
-def get_orders(username: str = None):
+def get_orders(username: str = None) -> None:
     if username:
         return Order.objects.filter(user__username=username)
     return Order.objects.all()
