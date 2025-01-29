@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Any
 
 from django.db.models import QuerySet
 
@@ -52,7 +52,7 @@ def get_taken_seats(movie_session_id: MovieSession) -> list[dict[str, Any]]:
 
     taken_seats = []
 
-    tickets = Ticket.objects.filter(movie_session_id=movie_session_id, is_taken=True)
+    tickets = Ticket.objects.filter(movie_session_id=movie_session_id)
 
     for ticket in tickets:
         taken_seats.append({

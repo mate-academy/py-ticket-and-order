@@ -1,23 +1,38 @@
-from django.db.models import QuerySet
-
 from db.models import Order
 from db.models import Ticket
 from db.models import MovieSession
-from django.db import transaction
 from datetime import datetime
-from django.contrib.auth.models import User
+from db.models import User
+from typing import List, Dict, Union, Optional
 
-def create_order(tickets, username, date=None):
+from django.db.models import QuerySet
+from django.db import transaction
+
+
+def create_order(tickets: List[Dict[str, Union[int, str]]],
+                 username: str,
+                 date: Optional[Union[str, datetime]] = None) -> Order:
     with transaction.atomic():
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise ValueError("User not found")
 
         if not date:
-            date = datetime.now()
+            date = datetime.utcnow()
 
-        order = Order.objects.create(user=user, created_at=date)
+        order = Order.objects.create(user_id=user.id)
+
+        order.created_at = date
+        order.save()
 
         for ticket_data in tickets:
-            movie_session = MovieSession.objects.get(pk=ticket_data["movie_session"])
+            try:
+                movie_session = MovieSession.objects.get(
+                    pk=ticket_data["movie_session"])
+            except MovieSession.DoesNotExist:
+                raise ValueError(f"Movie session "
+                                 f"{ticket_data['movie_session']} not found")
 
             Ticket.objects.create(
                 row=ticket_data["row"],
@@ -26,15 +41,13 @@ def create_order(tickets, username, date=None):
                 order=order
             )
 
-    return order
+        return order
 
-def get_order(username:str = None):
+
+def get_orders(username: str = None) -> QuerySet:
     if username:
         orders = Order.objects.filter(user__username=username)
     else:
         orders = Order.objects.all()
 
     return orders
-
-
-
