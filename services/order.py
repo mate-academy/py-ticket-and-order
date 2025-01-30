@@ -3,31 +3,35 @@ from datetime import datetime
 from django.db import transaction
 from django.db.models import QuerySet
 
-from db.models import Order, Ticket, User
+from db.models import Order, Ticket, User, MovieSession
 
 
+@transaction.atomic
 def create_order(
         tickets: list[dict],
         username: str, date:
         datetime = None
 ) -> Order:
-    with transaction.atomic():
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise User.DoesNotExist
+    order = Order.objects.create(user_id=user.id)
+    if date:
+        order.created_at = date
+        order.save()
+    for ticket in tickets:
         try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise Exception
-        order = Order.objects.create(user_id=user.id)
-        if date:
-            order.created_at = date
-            order.save()
-        for ticket in tickets:
-            Ticket.objects.create(
-                movie_session_id=ticket["movie_session"],
-                order=order,
-                row=ticket["row"],
-                seat=ticket["seat"]
-            )
-        return order
+            MovieSession.objects.get(id=ticket["movie_session"])
+        except MovieSession.DoesNotExist:
+            raise MovieSession.DoesNotExist
+        Ticket.objects.create(
+            movie_session_id=ticket["movie_session"],
+            order=order,
+            row=ticket["row"],
+            seat=ticket["seat"]
+        )
+    return order
 
 
 def get_orders(username: str = None) -> QuerySet:

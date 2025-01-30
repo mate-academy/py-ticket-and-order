@@ -22,7 +22,7 @@ def create_user(
     return user
 
 
-def get_user(user_id: int) -> User:
+def get_user(user_id: int) -> User | None:
     return User.objects.filter(id=user_id).first()
 
 
