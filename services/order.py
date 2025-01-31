@@ -1,6 +1,5 @@
 from django.db import transaction
-from db.models import Order, Ticket
-from django.utils import timezone
+from db.models import Order, Ticket, User
 
 
 def create_order(
@@ -9,10 +8,8 @@ def create_order(
         date: str = None
 ) -> None:
     with transaction.atomic():
-        order = Order.objects.create(
-            user_id=username,
-            created_at=date if date else timezone.now()
-        )
+        user = User.objects.get(username=username)
+        order = Order.objects.create(user=user)
 
         for ticket_data in tickets:
             Ticket.objects.create(

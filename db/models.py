@@ -75,7 +75,7 @@ class Order(models.Model):
         ]
 
     def __str__(self) -> None:
-        return f"<Order: {self.created_at}>"
+        return str(self.created_at)
 
 
 class Ticket(models.Model):

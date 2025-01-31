@@ -21,7 +21,11 @@ def get_movies_sessions(session_date: str = None) -> QuerySet:
 
 
 def get_movie_session_by_id(movie_session_id: int) -> MovieSession:
-    return MovieSession.objects.get(id=movie_session_id)
+    try:
+        session = MovieSession.objects.get(id=movie_session_id)
+    except MovieSession.DoesNotExist:
+        session = None
+    return session
 
 
 def get_taken_seats(movie_session_id: int) -> list[dict]:
