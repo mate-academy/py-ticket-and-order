@@ -89,14 +89,14 @@ class Ticket(models.Model):
                 f"{self.movie_session.show_time} "
                 f"(row: {self.row}, seat: {self.seat})")
 
-    def clean(self):
+    def clean(self) -> None:
         if self.row > self.movie_session.cinema_hall.rows or self.row < 1:
             raise ValidationError
         if (self.seat > self.movie_session.cinema_hall.seats_in_row
                 or self.seat < 1):
             raise ValidationError
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         return super().save(*args, **kwargs)
 
