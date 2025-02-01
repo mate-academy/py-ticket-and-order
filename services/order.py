@@ -27,3 +27,14 @@ def create_order(tickets: list, username: str, date: str = None) -> Order:
 
     except User.DoesNotExist:
         raise ValueError(f"User with username '{username}' does not exist.")
+
+
+def get_orders(username: str = None) -> Order:
+    """Отримує всі замовлення або лише для конкретного користувача"""
+    if username:
+        try:
+            user = User.objects.get(username=username)
+            return Order.objects.filter(user=user).order_by("-created_at")
+        except User.DoesNotExist:
+            return Order.objects.none()
+    return Order.objects.all().order_by("-created_at")
