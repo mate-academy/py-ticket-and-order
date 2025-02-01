@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import QuerySet
 
 from db.models import MovieSession
@@ -41,11 +42,18 @@ def update_movie_session(
 
 
 def delete_movie_session_by_id(session_id: int) -> None:
-    MovieSession.objects.get(id=session_id).delete()
+    try:
+        MovieSession.objects.get(id=session_id).delete()
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist("MovieSession does not exist")
 
 
 def get_taken_seats(movie_session_id: int) -> list:
-    movie_session = MovieSession.objects.get(id=movie_session_id)
+    try:
+        movie_session = MovieSession.objects.get(id=movie_session_id)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist("Movie session not found")
+
     rows_seats = tuple(movie_session.tickets.values_list("row", "seat"))
     return [
         {"row": row_seat[0], "seat" : row_seat[1]}
