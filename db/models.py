@@ -70,7 +70,7 @@ class Order(models.Model):
         ]
 
     def __str__(self) -> str:
-        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        return self.created_at.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class Ticket(models.Model):
@@ -109,9 +109,9 @@ class Ticket(models.Model):
 
     def __str__(self) -> str:
         movie_session = self.movie_session
-        return (f"{movie_session.movie.title}"
-                f" {movie_session.show_time.strftime("%Y-%m-%d %H:%M:%S")}"
-                f" (row: {self.row}, seat: {self.seat})")
+        return (f"{movie_session.movie.title} "
+                f"{movie_session.show_time.strftime('%Y-%m-%d %H:%M:%S')} "
+                f"(row: {self.row}, seat: {self.seat})")
 
 
 class User(AbstractUser):
