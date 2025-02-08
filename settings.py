@@ -23,6 +23,13 @@ USE_I18N = True
 
 USE_TZ = False
 
-INSTALLED_APPS = [
+INSTALLED_APPS = INSTALLED_APPS = [
     "db",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sites",  # Not always necessary but useful
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # Your custom apps
 ]

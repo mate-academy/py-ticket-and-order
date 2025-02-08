@@ -1,7 +1,8 @@
 from django.db.models import QuerySet
 
 from db.models import MovieSession
-
+from typing import List, Dict
+from db.models import Ticket
 
 def create_movie_session(
     movie_show_time: str, movie_id: int, cinema_hall_id: int
@@ -42,3 +43,14 @@ def update_movie_session(
 
 def delete_movie_session_by_id(session_id: int) -> None:
     MovieSession.objects.get(id=session_id).delete()
+
+
+def get_taken_seats(movie_session_id: int) -> List[Dict[str, int]]:
+    """
+    Get a list of taken seats for a given movie session.
+
+    :param movie_session_id: The ID of the movie session.
+    :return: A list of dictionaries with rows and seats of the taken tickets.
+    """
+    taken_seats = Ticket.objects.filter(movie_session_id=movie_session_id).values("row", "seat")
+    return list(taken_seats)
