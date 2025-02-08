@@ -1,40 +1,36 @@
 from django.db import transaction
-from django.contrib.auth.models import User
-from typing import List, Dict, Optional
-from db.models import Order, Ticket  # Assuming Order and Ticket models exist
+from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.utils.timezone import make_aware, make_naive
 from datetime import datetime
+from db.models import Order, Ticket  # Assuming Order and Ticket models exist
+from typing import List, Dict, Optional
 from django.db.models import QuerySet
+
+# Get the correct User model (handles custom user models automatically)
+User = get_user_model()
 
 
 def create_order(
-    tickets: List[Dict[str, int]],
-    username: str,
-    date: Optional[str] = None,
+    tickets: List[Dict[str, int]], username: str, date: Optional[str] = None
 ) -> Order:
-    """
-    Create an order with associated tickets.
-    If a date is provided, set created_at to this date.
-    Ensures that either the whole operation completes or nothing is saved.
+    """Create a new order with the given tickets and user."""
+    user = get_user_model().objects.get(username=username)
 
-    :param tickets: List of ticket details (row, seat, movie_session).
-    :param username: The username of the user creating the order.
-    :param date: (Optional) Creation date for the order.
-    :return: The created Order object.
-    """
-    user = User.objects.get(username=username)
-
+    # ✅ Make datetime naive for SQLite if necessary
     created_at = (
-        datetime.strptime(date, "%Y-%m-%d %H:%M") if date else None
+        make_aware(datetime.strptime(date, "%Y-%m-%d %H:%M"))
+        if date
+        else make_aware(datetime.now())
     )
 
-    with transaction.atomic():
-        order = (
-            Order.objects.create(user=user, created_at=created_at)
-            if created_at
-            else Order.objects.create(user=user)
-        )
+    if not settings.USE_TZ:
+        created_at = make_naive(created_at)  # SQLite does not support TZ-aware
 
-        ticket_objects = [
+    with transaction.atomic():
+        order = Order.objects.create(user=user, created_at=created_at)
+
+        tickets_to_create = [
             Ticket(
                 order=order,
                 row=ticket["row"],
@@ -43,19 +39,16 @@ def create_order(
             )
             for ticket in tickets
         ]
-
-        Ticket.objects.bulk_create(ticket_objects)
+        Ticket.objects.bulk_create(tickets_to_create)
 
     return order
 
 
 def get_orders(username: Optional[str] = None) -> QuerySet:
-    """
-    Retrieve all orders or orders for a specific user.
+    """Retrieve orders sorted by creation time (latest first)."""
+    orders = Order.objects.select_related("user").order_by("-created_at")
 
-    :param username: (Optional) The username to filter orders by.
-    :return: A QuerySet of orders.
-    """
     if username:
-        return Order.objects.filter(user__username=username)
-    return Order.objects.all()
+        orders = orders.filter(user__username=username)
+
+    return orders

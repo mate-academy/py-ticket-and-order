@@ -15,13 +15,15 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "db.User"
+
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Europe/Kiev"
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
 INSTALLED_APPS = INSTALLED_APPS = [
     "db",

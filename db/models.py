@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.utils.timezone import now
 
 
 class Genre(models.Model):
@@ -21,8 +23,12 @@ class Actor(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=255, db_index=True)  # Adding index
     description = models.TextField()
-    actors = models.ManyToManyField(to=Actor, related_name="movies")
-    genres = models.ManyToManyField(to=Genre, related_name="movies")
+    actors = models.ManyToManyField(
+        to=Actor, related_name="movies"
+    )
+    genres = models.ManyToManyField(
+        to=Genre, related_name="movies"
+    )
 
     def __str__(self) -> str:
         return self.title
@@ -59,30 +65,26 @@ class MovieSession(models.Model):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=now)
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
-        blank=True,  # Temporarily allow NULL
+        blank=True,
     )
 
     class Meta:
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"<Order: {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}>"
+        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
 
 class Ticket(models.Model):
     movie_session = models.ForeignKey(
-        "MovieSession",
-        on_delete=models.CASCADE,
+        "MovieSession", on_delete=models.CASCADE
     )
-    order = models.ForeignKey(
-        "Order",
-        on_delete=models.CASCADE,
-    )
+    order = models.ForeignKey("Order", on_delete=models.CASCADE)
     row = models.IntegerField()
     seat = models.IntegerField()
 
@@ -96,52 +98,52 @@ class Ticket(models.Model):
 
     def __str__(self) -> str:
         return (
-            f"<Ticket: {self.movie_session} "
-            f"(row: {self.row}, seat: {self.seat})>"
+            f"{self.movie_session.movie.title} "
+            f"{self.movie_session.show_time} "
+            f"(row: {self.row}, seat: {self.seat})"
         )
 
     def clean(self) -> None:
         """Validate that row and seat numbers are within the allowed range."""
-        if self.row < 1 or self.row > self.movie_session.cinema_hall.rows:
+        if self.movie_session_id is None:
+            raise ValidationError(
+                "Movie session must be set before validation."
+            )
+
+        cinema_hall = self.movie_session.cinema_hall
+
+        if self.row < 1 or self.row > cinema_hall.rows:
             raise ValidationError(
                 {
                     "row": (
-                        "Row number must be in available range: "
-                        "(1, rows): (1, "
-                        f"{self.movie_session.cinema_hall.rows})"
+                        f"Row number must be between 1 and {cinema_hall.rows}."
                     )
                 }
             )
 
-        if (
-            self.seat < 1
-            or self.seat > self.movie_session.cinema_hall.seats_in_row
-        ):
+        if self.seat < 1 or self.seat > cinema_hall.seats_in_row:
             raise ValidationError(
                 {
                     "seat": (
-                        "Seat number must be in available range: "
-                        "(1, seats_in_row): (1, "
-                        f"{self.movie_session.cinema_hall.seats_in_row})"
+                        "Seat number must be between 1 and "
+                        f"{cinema_hall.seats_in_row}."
                     )
                 }
             )
 
     def save(self, *args, **kwargs) -> None:
-        """Override save method to enforce clean() validation before saving."""
+        """Enforce validation before saving."""
         self.full_clean()  # Calls clean() before saving
         super().save(*args, **kwargs)
 
 
 class User(AbstractUser):
     groups = models.ManyToManyField(
-        Group,
-        related_name="custom_user_set",  # Custom related name
-        blank=True,
+        Group, related_name="custom_user_set", blank=True
     )
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name="custom_user_permissions_set",  # Custom related name
+        related_name="custom_user_permissions_set",
         blank=True,
     )
 

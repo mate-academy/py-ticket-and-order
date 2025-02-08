@@ -1,5 +1,8 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from typing import Optional
+
+# Get the correct User model (handles custom user models automatically)
+User = get_user_model()
 
 
 def create_user(
@@ -10,7 +13,7 @@ def create_user(
     last_name: Optional[str] = None,
 ) -> User:
     """
-    Create a new user with encrypted password and optional details.
+    Create a new user with an encrypted password and optional details.
 
     :param username: The username for the new user.
     :param password: The password (will be encrypted).
