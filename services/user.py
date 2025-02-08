@@ -2,8 +2,13 @@ from django.contrib.auth.models import User
 from typing import Optional
 
 
-def create_user(username: str, password: str, email: Optional[str] = None, first_name: Optional[str] = None,
-                last_name: Optional[str] = None) -> User:
+def create_user(
+    username: str,
+    password: str,
+    email: Optional[str] = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+) -> User:
     """
     Create a new user with encrypted password and optional details.
 
@@ -40,9 +45,14 @@ def get_user(user_id: int) -> Optional[User]:
         return None
 
 
-def update_user(user_id: int, username: Optional[str] = None, password: Optional[str] = None,
-                email: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None) -> \
-Optional[User]:
+def update_user(
+    user_id: int,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    email: Optional[str] = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+) -> Optional[User]:
     """
     Update an existing user with new values if provided.
 

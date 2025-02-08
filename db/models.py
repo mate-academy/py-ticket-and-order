@@ -44,10 +44,14 @@ class CinemaHall(models.Model):
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
     cinema_hall = models.ForeignKey(
-        to=CinemaHall, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=CinemaHall,
+        on_delete=models.CASCADE,
+        related_name="movie_sessions",
     )
     movie = models.ForeignKey(
-        to=Movie, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=Movie,
+        on_delete=models.CASCADE,
+        related_name="movie_sessions",
     )
 
     def __str__(self) -> str:
@@ -57,19 +61,28 @@ class MovieSession(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, blank=True
-    )  # Temporarily allow NULL
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,  # Temporarily allow NULL
+    )
 
     class Meta:
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"<Order: {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}>"
+        return f"<Order: {self.created_at.strftime("%Y-%m-%d %H:%M:%S")}>"
 
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey("MovieSession", on_delete=models.CASCADE)
-    order = models.ForeignKey("Order", on_delete=models.CASCADE)
+    movie_session = models.ForeignKey(
+        "MovieSession",
+        on_delete=models.CASCADE,
+    )
+    order = models.ForeignKey(
+        "Order",
+        on_delete=models.CASCADE,
+    )
     row = models.IntegerField()
     seat = models.IntegerField()
 
@@ -82,23 +95,35 @@ class Ticket(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"<Ticket: {self.movie_session} (row: {self.row}, seat: {self.seat})>"
+        return (
+            f"<Ticket: {self.movie_session} "
+            f"(row: {self.row}, seat: {self.seat})>"
+        )
 
     def clean(self) -> None:
         """Validate that row and seat numbers are within the allowed range."""
         if self.row < 1 or self.row > self.movie_session.cinema_hall.rows:
             raise ValidationError(
                 {
-                    "row": f"Row number must be in available range: "
-                    f"(1, rows): (1, {self.movie_session.cinema_hall.rows})"
+                    "row": (
+                        "Row number must be in available range: "
+                        "(1, rows): (1, "
+                        f"{self.movie_session.cinema_hall.rows})"
+                    )
                 }
             )
 
-        if self.seat < 1 or self.seat > self.movie_session.cinema_hall.seats_in_row:
+        if (
+            self.seat < 1
+            or self.seat > self.movie_session.cinema_hall.seats_in_row
+        ):
             raise ValidationError(
                 {
-                    "seat": f"Seat number must be in available range: "
-                    f"(1, seats_in_row): (1, {self.movie_session.cinema_hall.seats_in_row})"
+                    "seat": (
+                        "Seat number must be in available range: "
+                        "(1, seats_in_row): (1, "
+                        f"{self.movie_session.cinema_hall.seats_in_row})"
+                    )
                 }
             )
 
