@@ -6,6 +6,8 @@ from django.db.models import QuerySet
 
 from db.models import Order, Ticket
 
+User = get_user_model()
+
 
 def create_order(
         tickets: list[dict[str, int]],
@@ -13,16 +15,14 @@ def create_order(
         date: str = None,
 ) -> Order:
     with transaction.atomic():
-        user = get_user_model().objects.get(username=username)
-
+        user = User.objects.get(username=username)
         order = Order.objects.create(
             user=user,
         )
 
         if date:
             order.created_at = datetime.strptime(date, "%Y-%m-%d %H:%M")
-
-        order.save()
+            order.save()
 
         for ticket in tickets:
             Ticket.objects.create(
@@ -32,7 +32,7 @@ def create_order(
                 seat=ticket["seat"],
             )
 
-    return order
+        return order
 
 
 def get_orders(username: str = None) -> QuerySet:
