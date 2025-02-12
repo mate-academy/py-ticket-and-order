@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from db.models import Order, Ticket
@@ -8,13 +9,18 @@ from django.db.models import QuerySet
 def create_order(tickets: list[dict],
                  username: str,
                  date: str = None) -> Order:
-    user = get_user_model().objects.get(username=username)
+    try:
+        user = get_user_model().objects.get(username=username)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with username '{username}' does not exist.")
 
+    order_date = None
     if date:
-        order_date = datetime.strptime(date, "%Y-%m-%d %H:%M")
-
-    else:
-        order_date = None
+        try:
+            order_date = datetime.strptime(date, "%Y-%m-%d %H:%M")
+        except ValueError:
+            raise ValueError(f"Invalid date format. Expected format is "
+                             f"'YYYY-MM-DD HH: MM', but got '{date}'.")
 
     with transaction.atomic():
         order = Order.objects.create(user=user, created_at=order_date)

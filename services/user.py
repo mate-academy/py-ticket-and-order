@@ -1,11 +1,14 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+
+User = get_user_model()
 
 
 def create_user(username: str,
                 password: str,
                 email: str = None,
                 first_name: str = "",
-                last_name: str = "") -> get_user_model():
+                last_name: str = "") -> User:
     user = get_user_model().objects.create_user(
         username=username,
         password=password,
@@ -16,8 +19,11 @@ def create_user(username: str,
     return user
 
 
-def get_user(user_id: int) -> get_user_model():
-    return get_user_model().objects.get(id=user_id)
+def get_user(user_id: int) -> User:
+    try:
+        return get_user_model().objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with ID {user_id} does not exist.")
 
 
 def update_user(
@@ -27,8 +33,11 @@ def update_user(
     email: str = None,
     first_name: str = None,
     last_name: str = None,
-) -> get_user_model():
-    user = get_user_model().objects.get(id=user_id)
+) -> User:
+    try:
+        user = get_user_model().objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with ID {user_id} does not exist.")
     if username:
         user.username = username
     if password:
