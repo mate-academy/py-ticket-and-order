@@ -1,4 +1,4 @@
-from db.models import User, MovieSession
+from db.models import User
 
 
 def create_user(
