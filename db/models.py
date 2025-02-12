@@ -71,8 +71,9 @@ class Order(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
+
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self) -> str:
         return f"{self.created_at}"
@@ -93,14 +94,17 @@ class Ticket(models.Model):
         ]
 
     def clean(self) -> None:
-        if not (0 < self.row < self.movie_session.cinema_hall.rows + 1):
-            raise ValidationError({"row": ["row number must be in "
-                                           "available range: "
-                                           "(1, rows): (1, 10)"]})
-        if not (0 < self.seat < self.movie_session.cinema_hall.seats_in_row + 1):
-            raise ValidationError({"seat": ["seat number must be in "
-                                            "available range: "
-                                            "(1, seats_in_row): (1, 12)"]})
+        rows_in_hall = self.movie_session.cinema_hall.rows
+        seats_in_row = self.movie_session.cinema_hall.seats_in_row
+        if not (0 < self.row < rows_in_hall + 1):
+            raise ValidationError({"row": [f"row number must be in "
+                                           f"available range: "
+                                           f"(1, rows): (1, {rows_in_hall})"]})
+        if not (0 < self.seat < seats_in_row + 1):
+            raise ValidationError({"seat": [f"seat number must be in "
+                                            f"available range: "
+                                            f"(1, seats_in_row): (1, "
+                                            f"{seats_in_row})"]})
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()

@@ -12,9 +12,12 @@ def create_order(
         date: datetime = None
 ) -> None:
     with transaction.atomic():
-        order = Order.objects.create(
-            user=User.objects.get(username=username),
-        )
+        try:
+            order = Order.objects.create(
+                user=User.objects.get(username=username),
+            )
+        except User.DoesNotExist as e:
+            print(e)
         if date:
             order.created_at = date
             order.save()
@@ -29,5 +32,9 @@ def create_order(
 
 def get_orders(username: str = None) -> QuerySet:
     if username:
-        return Order.objects.filter(user=User.objects.get(username=username))
+        return Order.objects.select_related(
+            "user",
+        ).filter(
+            user__username=username
+        )
     return Order.objects.all()

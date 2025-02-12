@@ -18,7 +18,10 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(pk=user_id)
+    try:
+        return User.objects.get(pk=user_id)
+    except User.DoesNotExist as e:
+        print(f"User {user_id} does not exist" + "\n" + e)
 
 
 def update_user(
@@ -29,7 +32,10 @@ def update_user(
         first_name: str = None,
         last_name: str = None
 ) -> None:
-    user = User.objects.get(pk=user_id)
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist as e:
+        print(e)
     if username:
         user.username = username
     if password:
@@ -44,12 +50,7 @@ def update_user(
 
 
 def get_taken_seats(movie_session_id: int) -> list[dict]:
-    our_list = []
-    for ticket in MovieSession.objects.get(pk=movie_session_id).ticket_set:
-        our_list.append(
-            {
-                "row": ticket.row,
-                "seat": ticket.seat,
-            }
-        )
-    return our_list
+    return [
+        {"row": ticket.row, "seat": ticket.seat}
+        for ticket in MovieSession.objects.get(pk=movie_session_id).ticket_set
+    ]
