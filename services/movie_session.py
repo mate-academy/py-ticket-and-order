@@ -41,21 +41,19 @@ def update_movie_session(
 
 
 def delete_movie_session_by_id(session_id: int) -> None:
-    MovieSession.objects.get(id=session_id).delete()
+    try:
+        MovieSession.objects.get(id=session_id).delete()
+    except MovieSession.DoesNotExist as e:
+        print(f"Movie Session {session_id} does not exist\n{e}")
 
 
 def get_taken_seats(movie_session_id: int) -> list[dict]:
-    our_list = []
-    for ticket in MovieSession.objects.get(
-            pk=movie_session_id,
-    ).ticket_set.values(
-            "row",
-            "seat"
-    ):
-        our_list.append(
-            {
-                "row": ticket["row"],
-                "seat": ticket["seat"],
-            }
-        )
-    return our_list
+    try:
+        return [
+            {"row": ticket.row, "seat": ticket.seat}
+            for ticket in MovieSession.objects.get(
+                pk=movie_session_id
+            ).ticket_set
+        ]
+    except MovieSession.DoesNotExist as e:
+        print(f"Movie session {movie_session_id} does not exist" + "\n" + e)

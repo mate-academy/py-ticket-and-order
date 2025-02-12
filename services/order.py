@@ -17,10 +17,11 @@ def create_order(
                 user=User.objects.get(username=username),
             )
         except User.DoesNotExist as e:
-            print(e)
+            print(f"User {username} does not exist\n{e}")
         if date:
-            order.created_at = date
-            order.save()
+            if order:
+                order.created_at = date
+                order.save()
         for ticket in tickets:
             Ticket.objects.create(
                 movie_session_id=ticket["movie_session"],
