@@ -50,10 +50,10 @@ def delete_movie_session_by_id(session_id: int) -> None:
 def get_taken_seats(movie_session_id: int) -> list[dict]:
     try:
         return [
-            {"row": ticket.row, "seat": ticket.seat}
+            {"row": ticket["row"], "seat": ticket["seat"]}
             for ticket in MovieSession.objects.get(
                 pk=movie_session_id
-            ).ticket_set
+            ).ticket_set.values("row", "seat")
         ]
     except MovieSession.DoesNotExist as e:
         print(f"Movie session {movie_session_id} does not exist" + "\n" + e)
