@@ -26,7 +26,7 @@ def create_order(tickets: list[dict],
                 id=ticket["movie_session"]).exists():
             raise ValidationError(
                 f"MovieSession with id "
-                f"{ticket["movie_session"]} does not exist.")
+                f"{ticket['movie_session']} does not exist.")
 
         ticket_instance = Ticket(
             order=order,
