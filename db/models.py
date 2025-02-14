@@ -64,7 +64,7 @@ class User(AbstractUser):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, related_name="orders", on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["-created_at"]

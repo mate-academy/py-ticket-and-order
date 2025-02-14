@@ -24,7 +24,7 @@ def create_order(
     return order
 
 
-def get_orders(username: str = None) -> QuerySet:
+def get_orders(username: str = None) -> QuerySet[Order]:
     orders = Order.objects.all().order_by("-user")
     if username:
         orders = orders.filter(user__username__icontains=username)
