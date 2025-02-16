@@ -8,7 +8,7 @@ def create_user(
         first_name: str = None,
         last_name: str = None
 ) -> User:
-    user = User.objects.create(
+    user = User.objects.create_user(
         username=username,
     )
     user.set_password(password)

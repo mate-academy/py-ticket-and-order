@@ -68,7 +68,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         return f"{self.created_at}"
 
     class Meta:
@@ -91,7 +91,7 @@ class Ticket(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=["row", "seat"], name="unique_seats")
+            UniqueConstraint(fields=["row", "seat", "movie_session"], name="unique_seats")
         ]
 
     def __str__(self) -> str:
