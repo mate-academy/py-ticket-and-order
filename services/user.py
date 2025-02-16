@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def create_user(
@@ -48,7 +47,7 @@ def update_user(
             password_validation.validate_password(password, user)
             user.set_password(password)
         except ValidationError as e:
-            return f"Password validation error: {', '.join(e.messages)}"
+            return f"Password validation error: {", ".join(e.messages)}"
     if email:
         user.email = email
     if first_name:
