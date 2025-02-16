@@ -1,7 +1,6 @@
-from db.models import Ticket, Order
+from db.models import Ticket, Order, MovieSession
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from datetime import datetime
 from django.db.models import QuerySet
 
 
@@ -10,22 +9,29 @@ def create_order(
     username: str,
     date: str = None
 ) -> Order | None:
-    user = get_user_model()
-    users = user.objects.get(username=username)
-
     with transaction.atomic():
-        order_data = {"user": users}
+        user = get_user_model().objects.get(username=username)
+        order = Order.objects.create(user=user)
+
         if date:
-            order_data["created_at"] = datetime.make_aware(
-                datetime.strptime(date, "%Y-%m-%d %H:%M")
+            order.created_at = date
+            order.save()
+
+        ticket_objects = [
+            Ticket(
+                order=order,
+                movie_session=MovieSession.objects.get(
+                    id=ticket["movie_session"]
+                ),
+                row=ticket["row"],
+                seat=ticket["seat"]
             )
+            for ticket in tickets
+        ]
 
-        order = Order.objects.create(**order_data)
-
-        ticket_objects = [Ticket(order=order, **ticket) for ticket in tickets]
         Ticket.objects.bulk_create(ticket_objects)
 
-    return order
+        return order
 
 
 def get_orders(username: str = None) -> QuerySet[Order]:
