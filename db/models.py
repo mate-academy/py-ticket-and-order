@@ -69,16 +69,20 @@ class Order(models.Model):
 
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey(MovieSession, on_delete=models.CASCADE)
+    movie_session = models.ForeignKey(
+        MovieSession,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     row = models.IntegerField()
     seat = models.IntegerField()
 
     def __str__(self) -> str:
-        return (f"Ticket: Speed {self.order.created_at}"
+        return (f"Ticket: {self.order.created_at}"
                 f" (row: {self.row}, seat: {self.seat})")
 
-    def clean(self) -> ValidationError:
+    def clean(self) -> None:
         if (
             self.row > self.movie_session.cinema_hall.rows
             or self.seat > self.movie_session.cinema_hall.seats_in_row

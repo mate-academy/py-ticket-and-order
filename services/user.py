@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
-from db.models import User
+from django.contrib.auth import password_validation
+from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def create_user(
@@ -19,8 +21,11 @@ def create_user(
     return get_user_model().objects.create_user(**user_data)
 
 
-def get_user(user_id: int) -> User:
-    return get_user_model().objects.get(id=user_id)
+def get_user(user_id: int) -> object:
+    try:
+        return get_user_model().objects.get(id=user_id)
+    except get_user_model().DoesNotExist:
+        return f"User with id {user_id} does not exist."
 
 
 def update_user(
@@ -31,11 +36,19 @@ def update_user(
     first_name: str = None,
     last_name: str = None
 ) -> None:
-    user = get_user_model().objects.get(id=user_id)
+    try:
+        user = get_user_model().objects.get(id=user_id)
+    except get_user_model().DoesNotExist:
+        return f"User with id {user_id} does not exist."
+
     if username:
         user.username = username
     if password:
-        user.set_password(password)
+        try:
+            password_validation.validate_password(password, user)
+            user.set_password(password)
+        except ValidationError as e:
+            return f"Password validation error: {', '.join(e.messages)}"
     if email:
         user.email = email
     if first_name:
