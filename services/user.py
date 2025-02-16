@@ -47,7 +47,7 @@ def update_user(
             password_validation.validate_password(password, user)
             user.set_password(password)
         except ValidationError as e:
-            return f"Password validation error: {", ".join(e.messages)}"
+            return f"Password validation error."
     if email:
         user.email = email
     if first_name:
