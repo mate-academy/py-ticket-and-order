@@ -2,14 +2,18 @@
 from db.models import models, Order, Ticket, User
 from datetime import datetime
 from django.db import transaction
+from django.shortcuts import get_object_or_404
+from typing import List
 
 
+@transaction.atomic
 def create_order(
-    tickets: list,
+    tickets: List,
     username: str,
     date: datetime = None
 ) -> Order:
-    with transaction.atomic():
+
+    try:
         user = User.objects.get(username=username)
         order = Order.objects.create(user=user)
 
@@ -27,7 +31,9 @@ def create_order(
 
         order.save()
 
-    return order
+        return order
+    except User.DoesNotExist:
+        return get_object_or_404(User, username=username)
 
 
 def get_orders(username: str = None) -> models.QuerySet:

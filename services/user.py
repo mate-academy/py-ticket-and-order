@@ -1,5 +1,8 @@
 # user.py
-from db.models import User
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+
+User = get_user_model()
 
 
 def create_user(
@@ -26,7 +29,10 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    try:
+        return User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return get_object_or_404(User, id=user_id)
 
 
 def update_user(
@@ -38,18 +44,21 @@ def update_user(
     last_name: str = None,
 ) -> User:
 
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(id=user_id)
 
-    if username:
-        user.username = username
-    if password:
-        user.set_password(password)
-    if email:
-        user.email = email
-    if first_name:
-        user.first_name = first_name
-    if last_name:
-        user.last_name = last_name
+        if username:
+            user.username = username
+        if password:
+            user.set_password(password)
+        if email:
+            user.email = email
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
 
-    user.save()
-    return user
+        user.save()
+        return user
+    except User.DoesNotExist:
+        return get_object_or_404(User, id=user_id)
