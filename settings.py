@@ -25,4 +25,10 @@ USE_TZ = False
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
-INSTALLED_APPS = ("db",)
+AUTH_USER_MODEL = "db.User"
+
+INSTALLED_APPS = INSTALLED_APPS = [
+    "db",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+]
