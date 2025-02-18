@@ -13,19 +13,22 @@ def create_user(
     last_name: str = None,
 ) -> User:
 
-    if first_name is None:
-        first_name = ""
-    if last_name is None:
-        last_name = ""
-    user = User.objects.create_user(
-        username=username,
-        password=password,
-        email=email,
-        first_name=first_name,
-        last_name=last_name
-    )
+    try:
+        if first_name is None:
+            first_name = ""
+        if last_name is None:
+            last_name = ""
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name
+        )
 
-    return user
+        return user
+    except User.DoesNotExist:
+        return get_object_or_404(User, username=username)
 
 
 def get_user(user_id: int) -> User:
