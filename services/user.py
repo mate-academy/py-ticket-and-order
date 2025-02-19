@@ -1,4 +1,6 @@
 from db.models import User
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 
 def create_user(
@@ -24,7 +26,12 @@ def create_user(
 
 
 def get_user(user_id: int) -> User:
-    return User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise ValueError(f"User with ID {user_id} does not exist.")
+
+    return user
 
 
 def update_user(
@@ -35,7 +42,10 @@ def update_user(
         last_name: str = None,
         email: str = None,
 ) -> None:
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        raise ValueError(f"User with ID {user_id} does not exist.")
 
     if username:
         user.username = username
@@ -46,7 +56,11 @@ def update_user(
     if last_name:
         user.last_name = last_name
     if email:
-        user.email = email
+        try:
+            validate_email(email)
+            user.email = email
+        except ValidationError:
+            raise ValueError("Invalid email format")
 
     user.save()
     return user
