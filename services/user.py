@@ -1,6 +1,9 @@
-from db.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 def create_user(
