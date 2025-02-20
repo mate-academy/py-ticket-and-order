@@ -19,7 +19,8 @@ def get_user(user_id: int) -> User:
 
 
 def update_user(user_id: int, password: str = None, first_name: str = None,
-                last_name: str = None, email: str = None, username: str = None) -> None:
+                last_name: str = None,
+                email: str = None, username: str = None) -> None:
     user = User.objects.get(id=user_id)
     if first_name:
         user.first_name = first_name
