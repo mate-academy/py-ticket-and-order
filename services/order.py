@@ -10,10 +10,14 @@ from db.models import Order, User, Ticket, MovieSession
 @transaction.atomic
 def create_order(tickets: list, username: str,
                  date: datetime = None) -> list[Ticket]:
-    order = Order.objects.create(
-        user=User.objects.get(username=username)
-    )
-    if date is not None:
+    try:
+        order = Order.objects.create(
+            user=User.objects.get(username=username)
+        )
+    except User.DoesNotExist:
+        return []
+
+    if date:
         order.created_at = date
         order.save()
     tickets_to_add = []
@@ -32,8 +36,12 @@ def create_order(tickets: list, username: str,
     return Ticket.objects.bulk_create(tickets_to_add)
 
 
-def get_orders(username: str = None) -> QuerySet:
-    if username:
-        return Order.objects.filter(user=User.objects.get(username=username))
-    else:
-        return Order.objects.all()
+def get_orders(username: str = None) -> QuerySet | None:
+    try:
+        if username:
+            return Order.objects.filter(user=User.objects.get(
+                username=username))
+        else:
+            return Order.objects.all()
+    except User.DoesNotExist:
+        return None
