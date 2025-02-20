@@ -25,17 +25,17 @@ def update_user(user_id: int, password: str = None, first_name: str = None,
                 last_name: str = None,
                 email: str = None, username: str = None) -> None:
     try:
-        user = User.objects.get(id=user_id)
+        user_model = User.objects.get(id=user_id)
         if first_name:
-            user.first_name = first_name
+            user_model.first_name = first_name
         if last_name:
-            user.last_name = last_name
+            user_model.last_name = last_name
         if email:
-            user.email = email
+            user_model.email = email
         if password:
-            user.set_password(password)
+            user_model.set_password(password)
         if username:
-            user.username = username
-        user.save()
+            user_model.username = username
+        user_model.save()
     except User.DoesNotExist:
         return None
