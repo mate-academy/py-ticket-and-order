@@ -108,9 +108,9 @@ class Ticket(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return (f'{self.movie_session.movie.title} '
+        return (f"{self.movie_session.movie.title} "
                 f'{self.movie_session.show_time.strftime("%Y-%m-%d %H:%M:%S")}'
-                f' (row: {self.row}, seat: {self.seat})')
+                f" (row: {self.row}, seat: {self.seat})")
 
 
 class User(AbstractUser):
