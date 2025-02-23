@@ -1,5 +1,5 @@
 from db.models import User
-
+from django.db.models import QuerySet
 
 def create_user(
         username: str,
@@ -22,7 +22,7 @@ def get_user(user_id: int) -> User:
     try:
         return User.objects.get(id=user_id)
     except User.DoesNotExist:
-        raise ValueError(f"User with id {user_id} does not exist.")
+        raise ObjectDoesNotExist(f"User with id {user_id} does not exist.")
 
 
 def update_user(
@@ -36,7 +36,7 @@ def update_user(
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-        raise ValueError(f"User with id {user_id} does not exist.")
+        raise ObjectDoesNotExist(f"User with id {user_id} does not exist.")
 
     if username:
         user.username = username
