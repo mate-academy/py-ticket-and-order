@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import Index, UniqueConstraint
 from django.utils import timezone
 
-import settings
+from django.conf import settings
 
 
 class Genre(models.Model):

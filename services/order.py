@@ -19,11 +19,9 @@ def create_order(
     with transaction.atomic():
 
         user = User.objects.get(username=username)
-        print(f"Creating order with date: {date} (type: {type(date)})")
         order = Order.objects.create(
             created_at=date,
             user=user)
-        print(order.created_at)
         for ticket in tickets:
             movie_session = MovieSession.objects.get(
                 id=ticket["movie_session"])
