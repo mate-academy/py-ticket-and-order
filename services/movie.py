@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import QuerySet
+from django.core.exceptions import ObjectDoesNotExist
 
 from db.models import Movie
 
@@ -24,15 +25,21 @@ def get_movies(
 
 
 def get_movie_by_id(movie_id: int) -> Movie:
-    return Movie.objects.get(id=movie_id)
+    try:
+        return Movie.objects.get(id=movie_id)
+    except Movie.DoesNotExist:
+        raise ObjectDoesNotExist(f"Movie with id {movie_id} does not exist.")
 
 
 def create_movie(
     movie_title: str,
     movie_description: str,
-    genres_ids: list = None,
-    actors_ids: list = None,
+    genres_ids: list[int] = None,
+    actors_ids: list[int] = None,
 ) -> Movie:
+    genres_ids = genres_ids or []  # Якщо genres_ids = None, встановлюємо порожній список
+    actors_ids = actors_ids or []  # Якщо actors_ids = None, встановлюємо порожній список
+
     with transaction.atomic():
         movie = Movie.objects.create(
             title=movie_title,
