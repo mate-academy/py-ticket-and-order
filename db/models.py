@@ -83,8 +83,8 @@ class Ticket(models.Model):
         on_delete=models.CASCADE
     )
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE)
-    row = models.IntegerField()
-    seat = models.IntegerField()
+    row = models.PositiveIntegerField()
+    seat = models.PositiveIntegerField()
 
     class Meta:
         constraints = [
