@@ -1,5 +1,3 @@
-from django.db.models import QuerySet
-
 from db.models import User
 
 
@@ -22,8 +20,11 @@ def create_user(
     return user
 
 
-def get_user(user_id: int) -> QuerySet:
-    return User.objects.get(pk=user_id)
+def get_user(user_id: int) -> User:
+    try:
+        return User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise ValueError(f"User with id {user_id} does not exist")
 
 
 def update_user(

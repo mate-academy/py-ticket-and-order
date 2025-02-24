@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import UniqueConstraint
 
-import settings
+from django.conf import settings
 
 
 class Genre(models.Model):
@@ -22,7 +22,7 @@ class Actor(models.Model):
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=255,)
+    title = models.CharField(max_length=255, )
     description = models.TextField()
     actors = models.ManyToManyField(to=Actor, related_name="movies")
     genres = models.ManyToManyField(to=Genre, related_name="movies")
@@ -95,8 +95,9 @@ class Ticket(models.Model):
         super().save(*args, **kwargs)
 
         class Meta:
-            UniqueConstraint(fields=["movie_session", "row", "seat"],
-                             name="unique_movie_session")
+            constraints = UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_movie_session")
 
     def __str__(self) -> str:
         return f"{self.movie_session} {str(self.row)} {str(self.seat)}"
