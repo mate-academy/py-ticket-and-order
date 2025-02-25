@@ -6,7 +6,7 @@ from db.models import Ticket, Order
 
 @transaction.atomic
 def create_order(
-        tickets: [Ticket],
+        tickets: list[Ticket],
         username: str,
         date: datetime = None
 ) -> None:

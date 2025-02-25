@@ -99,12 +99,12 @@ class Ticket(models.Model):
                 "{\\'row\\': " + f"[{msg_part} {cinema_hall.rows})\\']" + "}")
         if self.seat > cinema_hall.seats_in_row:
             raise ValidationError(f"\\'seat\\': [\\'seat number must be in"
-                            f" available range: (1, seats_in_row): "
-                            f"(1, {cinema_hall.seats_in_row})\\']")
+                                  f" available range: (1, seats_in_row): "
+                                  f"(1, {cinema_hall.seats_in_row})\\']")
 
     def save(self, *args, **kwargs) -> None:
         self.clean()
-        super().save(args)
+        super().save(*args, **kwargs)
 
     def get_taken_seat(self) -> {}:
-        return {"row": {self.row}, "seat": {self.seat}}
+        return {"row": self.row, "seat": self.seat}
