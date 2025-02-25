@@ -55,6 +55,9 @@ class MovieSession(models.Model):
 
 
 class User(AbstractUser):
+    first_name = models.CharField(null=False, max_length=255)
+    last_name = models.CharField(null=False, max_length=255)
+    email = models.CharField(null=False, max_length=255)
     pass
 
 
@@ -88,19 +91,19 @@ class Ticket(models.Model):
                 name="unique_ticket")]
 
     def __str__(self) -> str:
-        return (f"Ticket: {str(self.movie_session)} "
+        return (f"{str(self.movie_session)} "
                 f"(row: {self.row}, seat: {self.seat})")
 
     def clean(self) -> None:
         cinema_hall = self.movie_session.cinema_hall
         if self.row > cinema_hall.rows:
-            msg_part = "'row number must be in available range: (1, rows): (1,"
             raise ValidationError(
-                "{\\'row\\': " + f"[{msg_part} {cinema_hall.rows})\\']" + "}")
+                {'row': ['row number must be in available range: (1, '
+                f"rows): (1, {cinema_hall.rows})"]})
         if self.seat > cinema_hall.seats_in_row:
-            raise ValidationError(f"\\'seat\\': [\\'seat number must be in"
-                                  f" available range: (1, seats_in_row): "
-                                  f"(1, {cinema_hall.seats_in_row})\\']")
+            raise ValidationError(
+                {'seat': ['seat number must be in available range: (1, '
+                f"seats_in_row): (1, {cinema_hall.seats_in_row})"]})
 
     def save(self, *args, **kwargs) -> None:
         self.clean()

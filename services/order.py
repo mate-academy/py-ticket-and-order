@@ -1,7 +1,7 @@
 import datetime
 from django.db import transaction
 from django.db.models import QuerySet
-from db.models import Ticket, Order
+from db.models import Ticket, Order, User
 
 
 @transaction.atomic
@@ -12,7 +12,8 @@ def create_order(
 ) -> None:
     if date is None:
         date = datetime.datetime.now()
-    order = Order.objects.create(user=username, created_at=date)
+    user = User.objects.get_or_create(username=username)
+    order = Order.objects.create(user=user, created_at=date)
     for ticket in tickets:
         Ticket.objects.create(
             movie_session=ticket.movie_session,
