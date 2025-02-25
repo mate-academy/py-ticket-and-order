@@ -19,7 +19,6 @@ def get_movies(
     if title:
         queryset = queryset.filter(title__icontains=title)
 
-
     return queryset
 
 
