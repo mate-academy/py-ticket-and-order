@@ -12,13 +12,13 @@ def create_order(
 ) -> None:
     if date is None:
         date = datetime.datetime.now()
-    order = Order.objects.create(username=username, created_at=date)
+    order = Order.objects.create(user=username, created_at=date)
     for ticket in tickets:
         Ticket.objects.create(
             movie_session=ticket.movie_session,
             order=order,
             row=ticket.row,
-            seats=ticket.seats
+            seat=ticket.seats
         )
 
 

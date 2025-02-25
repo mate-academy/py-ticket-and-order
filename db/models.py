@@ -98,7 +98,7 @@ class Ticket(models.Model):
             raise ValidationError(
                 "{\\'row\\': " + f"[{msg_part} {cinema_hall.rows})\\']" + "}")
         if self.seat > cinema_hall.seats_in_row:
-            ValidationError(f"\\'seat\\': [\\'seat number must be in"
+            raise ValidationError(f"\\'seat\\': [\\'seat number must be in"
                             f" available range: (1, seats_in_row): "
                             f"(1, {cinema_hall.seats_in_row})\\']")
 

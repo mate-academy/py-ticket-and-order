@@ -8,11 +8,11 @@ def create_user(
         first_name: str = None,
         last_name: str = None
 ) -> None:
-    User.objects.create(username=username,
-                        password=password,
-                        email=email,
-                        first_name=first_name,
-                        last_name=last_name)
+    user = User.objects.create(username=username,
+                                email=email,
+                                first_name=first_name,
+                                last_name=last_name)
+    user.set_password(password)
 
 
 def get_user(user_id: str) -> User:
