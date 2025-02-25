@@ -6,6 +6,10 @@ from django.db.models import IntegerField
 import settings
 
 
+class User(AbstractUser):
+    pass
+
+
 class Genre(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -66,7 +70,7 @@ class Order(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"Order: {self.created_at}"
+        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
 
 class Ticket(models.Model):
@@ -81,24 +85,25 @@ class Ticket(models.Model):
                 fields=["movie_session", "order", "row", "seat"],
                 name="unique_ticket",)]
 
-    def __str__(self) -> str:
-        return f"{self.movie_session.movie.title} {str(self.row)}"
-
     def clean(self) -> None:
         max_rows = self.movie_session.cinema_hall.rows
         max_seats = self.movie_session.cinema_hall.seats_in_row
 
-        if not (1 <= max_seats <= max_rows):
+        if not (1 <= self.row <= max_rows):
             raise ValidationError({
-                "row": f"Row number must be in range (1, {max_rows})"})
-        if not (1 <= max_seats <= max_rows):
+                "row": [f"row number must be in available range: (1, rows): "
+                        f"(1, {max_rows})"]})
+        if not (1 <= self.seat <= max_seats):
             raise ValidationError({
-                "seat": f"Seat number must be in range (1, {max_seats})"})
+                "seat": [f"seat number must be in available range: "
+                         f"(1, seats_in_row): "
+                         f"(1, {max_seats})"]})
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
 
-
-class User(AbstractUser):
-    pass
+    def __str__(self) -> str:
+        return (f"{self.movie_session.movie.title} "
+                f"{self.movie_session.show_time} "
+                f"(row: {self.row}, seat: {self.seat})")
