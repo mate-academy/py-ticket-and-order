@@ -41,6 +41,9 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        return f"{self.created_at}"
+
 
 class CinemaHall(models.Model):
     name = models.CharField(max_length=255)
@@ -95,9 +98,12 @@ class Ticket(models.Model):
         super().save(*args, **kwargs)
 
         class Meta:
-            constraints = UniqueConstraint(
-                fields=["movie_session", "row", "seat"],
-                name="unique_movie_session")
+            constraints = [
+                UniqueConstraint(
+                    fields=["movie_session", "row", "seat"],
+                    name="unique_movie_session"
+                )
+            ]
 
     def __str__(self) -> str:
         return f"{self.movie_session} {str(self.row)} {str(self.seat)}"

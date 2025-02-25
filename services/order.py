@@ -51,14 +51,13 @@ def create_order(
         return order
 
 
-def get_orders(username: Optional[str] = None) -> List[Order]:
+def get_orders(username: Optional[str] = None) -> List[int]:
     orders = Order.objects.all()
-
     if username:
-        if not User.objects.filter(username=username).exists():
-            raise ValueError(
-                f"User with username '{username}' does not exist"
-            )
         orders = orders.filter(user__username=username)
 
-    return list(orders)
+    orders = orders.order_by("-created_at")
+
+    orders_values = orders.values_list("id", flat=True)
+
+    return list(orders_values)
