@@ -67,7 +67,7 @@ class Order(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"Order: {self.created_at}"
+        return f"{self.created_at}"
 
     class Meta:
         ordering = ["-created_at"]
@@ -84,10 +84,11 @@ class Ticket(models.Model):
     seat = models.IntegerField()
 
     class Meta:
-        indexes = [
-            models.Index(fields=[
-                "movie_session", "row", "seat"
-            ], name="unique_ticket_per_session"),
+        constraints = [
+            models.UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_ticket_per_session"
+            )
         ]
 
     def clean(self) -> None:
@@ -95,19 +96,19 @@ class Ticket(models.Model):
 
         if not (1 <= self.row <= cinema_hall.rows):
             raise ValidationError(
-                {"row": f"Row number must be in available range: "
-                    f"(1, {self.row}): (1, {cinema_hall.rows})"})
+                {"row": f"row number must be in available range: "
+                    f"(1, rows): (1, {cinema_hall.rows})"})
 
         if not (1 <= self.seat <= cinema_hall.seats_in_row):
             raise ValidationError(
-                {"seat": f"Seat number must be in available range: "
-                    f"(1, {self.seat}): (1, {cinema_hall.seats_in_row})"})
+                {"seat": f"seat number must be in available range: "
+                    f"(1, seats_in_row): (1, {cinema_hall.seats_in_row})"})
 
     def save(self, *args, **kwargs) -> Callable:
         self.full_clean()
         return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return (f"Ticket: {self.movie_session.movie.title}"
+        return (f"{self.movie_session.movie.title}"
                 f" {self.movie_session.show_time}"
                 f" (row: {self.row}, seat: {self.seat})")
