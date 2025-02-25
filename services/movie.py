@@ -17,11 +17,10 @@ def get_movies(
         queryset = queryset.filter(actors__id__in=actors_ids)
 
     if title:
-        queryset = queryset.filter(title__istartswith=title)
+        queryset = queryset.filter(title__icontains=title)
 
-    queryset = queryset.order_by("title", "id")
 
-    return queryset.distinct()
+    return queryset
 
 
 def get_movie_by_id(movie_id: int) -> Movie:
