@@ -96,11 +96,11 @@ class Ticket(models.Model):
         if self.row > cinema_hall.rows:
             msg_part = "'row number must be in available range: (1, rows): (1,"
             raise ValidationError(
-                f"{'row': [{msg_part} {cinema_hall.rows})']}")
+                "{\\'row\\': " + f"[{msg_part} {cinema_hall.rows})\\']" + "}")
         if self.seat > cinema_hall.seats_in_row:
-            ValidationError(f"'seat': ['seat number must be in available "
-                            f"range: (1, seats_in_row): "
-                            f"(1, {cinema_hall.seats_in_row})']")
+            ValidationError(f"\\'seat\\': [\\'seat number must be in"
+                            f" available range: (1, seats_in_row): "
+                            f"(1, {cinema_hall.seats_in_row})\\']")
 
     def save(self, *args, **kwargs) -> None:
         self.clean()
