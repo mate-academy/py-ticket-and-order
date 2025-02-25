@@ -19,7 +19,7 @@ def create_order(
             movie_session=ticket.movie_session,
             order=order,
             row=ticket.row,
-            seat=ticket.seats
+            seat=ticket.seat
         )
 
 
