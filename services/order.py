@@ -27,4 +27,4 @@ def get_orders(username: str = None) -> QuerySet[Order]:
         orders = Order.objects.filter(user__username=username)
     else:
         orders = Order.objects.all()
-    return orders.order_by('-created_at')
+    return orders.order_by("-created_at")
