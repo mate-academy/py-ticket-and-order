@@ -55,9 +55,9 @@ class MovieSession(models.Model):
 
 
 class User(AbstractUser):
-    first_name = models.CharField(null=False, max_length=255)
-    last_name = models.CharField(null=False, max_length=255)
-    email = models.CharField(null=False, max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
     pass
 
 
@@ -70,6 +70,9 @@ class Order(models.Model):
 
     def __str__(self) -> str:
         return f"{str(self.created_at)}"
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class Ticket(models.Model):
