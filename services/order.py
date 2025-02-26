@@ -3,6 +3,8 @@ import datetime
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 from db.models import Order, Ticket, MovieSession
 
@@ -13,18 +15,19 @@ def create_order(
     username: str,
     date: str = None,
 ) -> Order:
-    user = get_user_model().objects.get(username=username)
+    user = get_object_or_404(get_user_model(), username=username)
+
+    order = Order.objects.create(user=user)
 
     if date:
-        created_at = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M")
+        order.created_at = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M")
     else:
-        created_at = datetime.datetime.now()
-
-    order = Order.objects.create(user=user, created_at=created_at)
+        order.created_at = timezone.now()
+    order.save()
 
     for ticket_data in tickets:
         movie_session_id = ticket_data["movie_session"]
-        movie_session = MovieSession.objects.get(id=movie_session_id)
+        movie_session = get_object_or_404(MovieSession, id=movie_session_id)
         Ticket.objects.create(
             order=order,
             movie_session=movie_session,

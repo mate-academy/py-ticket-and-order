@@ -1,8 +1,7 @@
-import datetime
-from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.db.models import UniqueConstraint
 
 
@@ -26,6 +25,9 @@ class Movie(models.Model):
     description = models.TextField()
     actors = models.ManyToManyField(to=Actor, related_name="movies")
     genres = models.ManyToManyField(to=Genre, related_name="movies")
+
+    class Meta:
+        indexes = [models.Index(fields=["title"])]
 
     def __str__(self) -> str:
         return self.title
@@ -62,7 +64,7 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(default=datetime.datetime.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name="orders"
@@ -87,14 +89,17 @@ class Ticket(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=["order", "row", "seat"],
-                             name="unique_ticket")
+            UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_ticket"
+            )
         ]
 
     def __str__(self) -> str:
-        return (f"{self.movie_session.movie.title} "
-                f"{self.movie_session.show_time}"
-                f" (row: {self.row}, seat: {self.seat})")
+        return (
+            f"{self.movie_session.movie.title} {self.movie_session.show_time}"
+            f" (row: {self.row}, seat: {self.seat})"
+        )
 
     def clean(self) -> None:
         if not 1 <= self.row <= self.movie_session.cinema_hall.rows:
