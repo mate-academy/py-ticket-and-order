@@ -109,7 +109,7 @@ class Ticket(models.Model):
                           f"seats_in_row): (1, {cinema_hall.seats_in_row})"]})
 
     def save(self, *args, **kwargs) -> None:
-        self.clean()
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def get_taken_seat(self) -> {}:
