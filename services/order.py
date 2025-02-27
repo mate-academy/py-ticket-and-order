@@ -28,8 +28,8 @@ def create_order(tickets: list[dict], username: str,
                 )
             except MovieSession.DoesNotExist:
                 raise ObjectDoesNotExist(
-                    "Movie session with id "
-                    f"{ticket_data["movie_session"]} does not exist."
+                    f"Movie session with id {ticket_data["movie_session"]} "
+                    f"does not exist."
                 )
 
             Ticket.objects.create(movie_session=movie_session,
