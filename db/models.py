@@ -90,7 +90,7 @@ class Ticket(models.Model):
             raise ValidationError({
                 "row": [
                     f"row number must be in available range: "
-                    f"(1, rows): (1, {cinema_hall.rows}"
+                    f"(1, rows): (1, {cinema_hall.rows})"
                 ]
             })
 
