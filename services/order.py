@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from typing import List
@@ -15,10 +13,9 @@ from db.models import MovieSession
 def create_order(
         tickets: List[dict],
         username: str,
-        date: datetime = None
+        date: str = None
 ) -> None:
     user = get_user_model().objects.get(username=username)
-
     order = Order.objects.create(user=user)
     if date:
         order.created_at = date
