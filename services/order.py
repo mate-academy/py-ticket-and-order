@@ -21,8 +21,9 @@ def create_order(tickets: list,
                 MovieSession.objects.filter(id=ticket["movie_session"])
                 .exists()
             ):
-                raise ValueError(f"Invalid movie_session_id: "
-                                 f"{ticket["movie_session"]}")
+                raise ValueError(
+                    f"Invalid movie_session_id: {ticket["movie_session"]}"
+                )
 
             ticket_.append(
                 Ticket(movie_session_id=ticket["movie_session"],
