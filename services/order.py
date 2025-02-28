@@ -6,7 +6,7 @@ from db.models import Order, Ticket, MovieSession, User
 
 
 def create_order(tickets: list[dict], username: str,
-                 date: str = None) -> Order:
+                 date: None) -> Order:
     with transaction.atomic():
         try:
             user = User.objects.get(username=username)
