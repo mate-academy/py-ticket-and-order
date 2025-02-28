@@ -65,7 +65,7 @@ class Order(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Order {self.created_at}"
 
 
@@ -79,11 +79,11 @@ class Ticket(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["movie_session", "row", "seat"],
-                name = "unique_ticket_per_seat"
+                name="unique_ticket_per_seat"
             )
         ]
 
-    def clean(self):
+    def clean(self) -> None:
 
         cinema_hall = self.movie_session.cinema_hall
         if self.row < 1 or self.row > cinema_hall.rows:
@@ -102,9 +102,9 @@ class Ticket(models.Model):
                 ]
             })
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.movie_session} (row: {self.row}, seat: {self.seat})"
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
