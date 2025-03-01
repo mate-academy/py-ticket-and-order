@@ -82,8 +82,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('show_time', models.DateTimeField()),
-                ('cinema_hall', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='movie_sessions', to='db.cinemahall')),
-                ('movie', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='movie_sessions', to='db.movie')),
+                ('cinema_hall', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='movie_sessions', to='db.CinemaHall')),
+                ('movie', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='movie_sessions', to='db.Movie')),
             ],
         ),
         migrations.CreateModel(
@@ -103,8 +103,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('row', models.IntegerField()),
                 ('seat', models.IntegerField()),
-                ('movie_session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tickets', to='db.moviesession')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='orders', to='db.order')),
+                ('movie_session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tickets', to='db.MovieSession')),
+                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='orders', to='db.Order')),
             ],
         ),
         migrations.AddIndex(
