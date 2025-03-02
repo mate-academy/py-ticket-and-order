@@ -1,3 +1,4 @@
+from django.conf.global_settings import AUTH_USER_MODEL
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
@@ -8,7 +9,7 @@ def create_user(
     email: str = None,
     last_name: str = None,
     first_name: str = None,
-) -> get_user_model():
+) -> AUTH_USER_MODEL:
     user = get_user_model().objects.create_user(
         username=username,
         password=password,
@@ -28,7 +29,7 @@ def create_user(
     return user
 
 
-def get_user(user_id: int) -> get_user_model():
+def get_user(user_id: int) -> AUTH_USER_MODEL:
     return get_object_or_404(get_user_model(), pk=user_id)
 
 
@@ -39,7 +40,7 @@ def update_user(
     email: str = None,
     first_name: str = None,
     last_name: str = None,
-) -> get_user_model():
+) -> AUTH_USER_MODEL:
     user = get_object_or_404(get_user_model(), pk=user_id)
 
     if username:
