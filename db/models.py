@@ -1,8 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
-
-import settings
+from django.conf import settings
 
 
 class Genre(models.Model):
@@ -112,11 +111,9 @@ class Ticket(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                "row",
-                "seat",
-                "movie_session",
+                fields=["row", "seat", "movie_session"],
                 name="unique_seat_row_on_the_movie"
-            ),
+            )
         ]
 
     def __str__(self) -> str:

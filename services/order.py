@@ -25,7 +25,7 @@ def create_order(
             )
 
 
-def get_orders(username: str = None) -> QuerySet:
+def get_orders(username: str = None) -> QuerySet[Order]:
     if username:
         with transaction.atomic():
             order = Order.objects.filter(
