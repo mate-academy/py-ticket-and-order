@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 
 def create_user(
@@ -28,7 +29,7 @@ def create_user(
 
 
 def get_user(user_id: int) -> get_user_model():
-    return get_user_model().objects.get(id=user_id)
+    return get_object_or_404(get_user_model(), pk=user_id)
 
 
 def update_user(
@@ -39,7 +40,7 @@ def update_user(
     first_name: str = None,
     last_name: str = None,
 ) -> get_user_model():
-    user = get_user_model().objects.get(id=user_id)
+    user = get_object_or_404(get_user_model(), pk=user_id)
 
     if username:
         user.username = username
