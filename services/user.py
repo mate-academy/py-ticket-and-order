@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
 
+User = get_user_model()
+
 
 @transaction.atomic
 def create_user(
@@ -11,8 +13,7 @@ def create_user(
     first_name: str = "",
     last_name: str = "",
 ) -> None:
-    user_model = get_user_model()
-    user_model.objects.create_user(
+    User.objects.create_user(
         username=username,
         password=password,
         email=email,
@@ -22,8 +23,7 @@ def create_user(
 
 
 def get_user(user_id: int) -> AbstractBaseUser:
-    user_model = get_user_model()
-    return user_model.objects.get(id=user_id)
+    return User.objects.get(id=user_id)
 
 
 @transaction.atomic

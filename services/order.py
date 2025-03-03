@@ -4,7 +4,9 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import QuerySet
 
-from db.models import Order, Ticket, User
+from db.models import Order, Ticket
+
+User = get_user_model()
 
 
 @transaction.atomic
@@ -13,8 +15,7 @@ def create_order(
     username: User,
     date: datetime = None,
 ) -> None:
-    user_model = get_user_model()
-    user = user_model.objects.get(username=username)
+    user = User.objects.get(username=username)
     order = Order.objects.create(user=user)
     if date:
         order.created_at = date
@@ -22,9 +23,9 @@ def create_order(
 
     for ticket in tickets:
         Ticket.objects.create(
-            row=ticket["row"],
-            seat=ticket["seat"],
-            movie_session_id=ticket["movie_session"],
+            row=ticket.get("row"),
+            seat=ticket.get("seat"),
+            movie_session_id=ticket.get("movie_session"),
             order=order,
         )
 
