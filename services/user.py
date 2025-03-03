@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from db.models import User
 
 
-def create_user(username, password, /, email, first_name, last_name):
+def create_user(username, password, /, email, first_name, last_name) -> User:
     user = User.objects.create_user(username=username, password=password)
 
     if email:
@@ -17,8 +17,11 @@ def create_user(username, password, /, email, first_name, last_name):
     return user
 
 
-def get_user(user_id):
-    return User.objects.filter(id=user_id)
+def get_user(user_id: int) -> User:
+    try:
+        return User.objects.get(id=user_id)  # Отримуємо конкретного користувача
+    except User.DoesNotExist:
+        raise "Some mistake"
 
 
 def update_user(

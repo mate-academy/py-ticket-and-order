@@ -41,6 +41,9 @@ def create_order(tickets: list[dict], username: str, date: str = None) -> Order:
 
 
 def get_orders(username=None):
-    if username != None:
-        return Order.objects.filter(username=username)
-    return Order.objects.all()
+    try:
+        if username != None:
+            return Order.objects.filter(user__username=username)
+        return Order.objects.all()
+    except Order.DoesNotExist:
+        raise "Some mistake"
