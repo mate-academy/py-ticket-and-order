@@ -1,11 +1,12 @@
 from db.models import User
+from typing import Optional
 
 
 def create_user(username: str,
                 password: str,
-                email: str = None,
-                first_name: str = None,
-                last_name: str = None,
+                email: Optional[str],
+                first_name: Optional[str],
+                last_name: Optional[str],
                 ) -> User:
     user = User.objects.create_user(username=username, password=password)
 

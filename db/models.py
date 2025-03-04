@@ -87,7 +87,9 @@ class Ticket(models.Model):
     def clean(self) -> None:
         cinema_hall = self.movie_session.cinema_hall
         if self.row > cinema_hall.rows or self.seat > cinema_hall.seats_in_row:
-            raise ValidationError()
+            raise ValidationError(
+                f"Row {self.row} or seat {self.seat} don`t exist cinema hall."
+            )
 
     def save(self, *args, **kwargs) -> any:
         self.clean()
